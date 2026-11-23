@@ -1,334 +1,642 @@
+
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stay Hard - Health Tracker</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
+<title>MR.GIIBYE FITNESS</title>
 
-    body {
-      background: #0f0f0f;
-      color: #ffffff;
-      min-height: 100vh;
-      padding: 20px;
-    }
+<style>
+:root {
+  --bg:#080808;
+  --card:#141414;
+  --border:#292929;
+  --muted:#888;
+  --white:#fff;
+  --soft:#c7c7c7;
+}
 
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-    }
+* {
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial, sans-serif;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 8px;
-      letter-spacing: 1px;
-    }
+body {
+  background:var(--bg);
+  color:var(--white);
+  min-height:100vh;
+  padding:22px 16px 50px;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #888;
-      margin-bottom: 30px;
-      font-size: 14px;
-    }
+.container {
+  max-width:520px;
+  margin:auto;
+}
 
-    .card {
-      background: #1a1a1a;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #2a2a2a;
-    }
+header {
+  text-align:center;
+  padding:24px 0 28px;
+  animation:fadeDown .8s ease both;
+}
 
-    .card h2 {
-      font-size: 18px;
-      margin-bottom: 16px;
-      color: #fff;
-    }
+.logo {
+  font-size:27px;
+  font-weight:900;
+  letter-spacing:3px;
+}
 
-    label {
-      display: block;
-      font-size: 13px;
-      color: #aaa;
-      margin-bottom: 6px;
-    }
+.subtitle {
+  color:var(--muted);
+  font-size:11px;
+  letter-spacing:3px;
+  margin-top:10px;
+}
 
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      background: #111;
-      border: 1px solid #333;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 16px;
-      margin-bottom: 14px;
-      outline: none;
-    }
+.tagline {
+  font-size:10px;
+  color:#aaa;
+  letter-spacing:2px;
+  margin-top:15px;
+}
 
-    input:focus {
-      border-color: #555;
-    }
+.card {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:17px;
+  padding:20px;
+  margin-bottom:16px;
+  animation:fadeUp .65s ease both;
+  transition:border-color .25s, transform .25s;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+.card:hover {
+  border-color:#555;
+  transform:translateY(-2px);
+}
 
-    button:hover {
-      background: #ddd;
-    }
+.card h2 {
+  font-size:16px;
+  letter-spacing:1px;
+  margin-bottom:17px;
+}
 
-    .result {
-      margin-top: 16px;
-      padding: 14px;
-      border-radius: 10px;
-      text-align: center;
-      display: none;
-    }
+.muted {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
 
-    .result.show {
-      display: block;
-    }
+.rank {
+  font-size:23px;
+  font-weight:900;
+  letter-spacing:2px;
+  margin:12px 0 7px;
+}
 
-    .underweight { background: #1e3a5f; }
-    .normal { background: #1e3a2f; }
-    .overweight { background: #5c3b1e; }
-    .obese { background: #5c1e1e; }
+.rank-label {
+  font-size:11px;
+  color:#aaa;
+  letter-spacing:2px;
+}
 
-    .bmi-value {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+.progress-track {
+  width:100%;
+  height:7px;
+  background:#292929;
+  border-radius:20px;
+  overflow:hidden;
+  margin:15px 0 9px;
+}
 
-    .bmi-status {
-      font-size: 15px;
-      opacity: 0.9;
-    }
+.progress-fill {
+  height:100%;
+  width:0;
+  background:white;
+  border-radius:20px;
+  transition:width 1s ease;
+}
 
-    .advice {
-      margin-top: 10px;
-      font-size: 13px;
-      opacity: 0.8;
-      line-height: 1.5;
-    }
+.stats {
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
 
-    /* Checklist */
-    .checklist-input {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
+.stat {
+  background:#101010;
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:15px;
+}
 
-    .checklist-input input {
-      margin-bottom: 0;
-      flex: 1;
-    }
+.stat-number {
+  font-size:25px;
+  font-weight:800;
+}
 
-    .checklist-input button {
-      width: auto;
-      padding: 0 18px;
-      white-space: nowrap;
-    }
+.stat-label {
+  font-size:10px;
+  color:var(--muted);
+  margin-top:6px;
+  letter-spacing:1px;
+}
 
-    .todo-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid #2a2a2a;
-    }
+input {
+  width:100%;
+  background:#090909;
+  border:1px solid #333;
+  color:white;
+  border-radius:9px;
+  padding:13px;
+  margin:7px 0 13px;
+  outline:none;
+  font-size:14px;
+}
 
-    .todo-item:last-child {
-      border-bottom: none;
-    }
+input:focus {
+  border-color:#aaa;
+}
 
-    .todo-item input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: #fff;
-      cursor: pointer;
-    }
+button {
+  border:0;
+  border-radius:9px;
+  padding:13px 15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
 
-    .todo-item span {
-      flex: 1;
-      font-size: 15px;
-    }
+button:active {
+  transform:scale(.96);
+}
 
-    .todo-item.done span {
-      text-decoration: line-through;
-      color: #666;
-    }
+.primary {
+  width:100%;
+  background:white;
+  color:black;
+}
 
-    .delete-btn {
-      background: none;
-      border: none;
-      color: #666;
-      font-size: 18px;
-      cursor: pointer;
-      width: auto;
-      padding: 0 6px;
-    }
+.primary:hover {
+  background:#ccc;
+}
 
-    .delete-btn:hover {
-      color: #ff5555;
-    }
+.secondary {
+  background:#292929;
+  color:white;
+}
 
-    .empty {
-      text-align: center;
-      color: #555;
-      font-size: 14px;
-      padding: 20px 0;
-    }
-  </style>
+.section-label {
+  color:#aaa;
+  font-size:10px;
+  letter-spacing:2px;
+  margin-bottom:10px;
+}
+
+.todo-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 0;
+  border-bottom:1px solid #292929;
+  animation:fadeUp .3s ease both;
+}
+
+.todo-item:last-child {
+  border-bottom:none;
+}
+
+.todo-item input {
+  width:19px;
+  height:19px;
+  margin:0;
+  accent-color:white;
+  flex-shrink:0;
+}
+
+.todo-item span {
+  flex:1;
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+
+.todo-item.done span {
+  color:#777;
+  text-decoration:line-through;
+}
+
+.delete-btn {
+  color:#888;
+  background:none;
+  padding:5px 9px;
+  font-size:17px;
+}
+
+.delete-btn:hover {
+  color:white;
+}
+
+.row {
+  display:flex;
+  gap:8px;
+}
+
+.row input {
+  flex:1;
+  min-width:0;
+}
+
+.row button {
+  margin-top:7px;
+  height:43px;
+}
+
+.empty {
+  text-align:center;
+  color:#777;
+  padding:20px 0;
+  font-size:13px;
+}
+
+.premium {
+  background:linear-gradient(140deg,#1b1b1b,#090909);
+  border:1px solid #555;
+}
+
+.premium-title {
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:3px;
+  margin:12px 0;
+}
+
+.coming {
+  display:inline-block;
+  border:1px solid #777;
+  color:#ddd;
+  padding:6px 10px;
+  font-size:9px;
+  letter-spacing:2px;
+  border-radius:30px;
+  margin-bottom:14px;
+}
+
+.premium ul {
+  list-style:none;
+  color:#bbb;
+  font-size:12px;
+  line-height:2.3;
+  margin:12px 0;
+}
+
+.premium li::before {
+  content:"✦ ";
+  color:white;
+}
+
+.premium button {
+  width:100%;
+  background:#292929;
+  color:#aaa;
+  cursor:not-allowed;
+}
+
+.bmi-result {
+  margin-top:13px;
+  padding:15px;
+  background:#090909;
+  border-radius:10px;
+  display:none;
+  line-height:1.6;
+  font-size:13px;
+}
+
+footer {
+  text-align:center;
+  padding:24px 0;
+  color:#666;
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+@keyframes fadeUp {
+  from {opacity:0; transform:translateY(18px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+@keyframes fadeDown {
+  from {opacity:0; transform:translateY(-15px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <h1>STAY HARD</h1>
-    <p class="subtitle">Health Tracker</p>
+<div class="container">
 
-    <!-- BMI Calculator -->
-    <div class="card">
-      <h2>BMI Calculator</h2>
-      
-      <label>Chiều cao (cm)</label>
-      <input type="number" id="height" placeholder="Ví dụ: 170" min="100" max="250">
+<header>
+  <div class="logo">MR.GIIBYE</div>
+  <div class="subtitle">FITNESS & LIFESTYLE</div>
+  <div class="tagline">DISCIPLINE. CONSISTENCY. PROGRESS.</div>
+</header>
 
-      <label>Cân nặng (kg)</label>
-      <input type="number" id="weight" placeholder="Ví dụ: 65" min="30" max="300">
+<!-- DASHBOARD -->
+<section class="card">
+  <div class="section-label">YOUR DASHBOARD</div>
+  <h2>Consistency Tracker</h2>
 
-      <button onclick="calculateBMI()">Tính BMI</button>
-
-      <div id="result" class="result">
-        <div class="bmi-value" id="bmiValue">0</div>
-        <div class="bmi-status" id="bmiStatus"></div>
-        <div class="advice" id="advice"></div>
-      </div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-number" id="streak">0</div>
+      <div class="stat-label">CURRENT STREAK</div>
     </div>
-
-    <!-- Checklist -->
-    <div class="card">
-      <h2>Daily Checklist</h2>
-      
-      <div class="checklist-input">
-        <input type="text" id="todoInput" placeholder="Thêm việc cần làm..." onkeypress="if(event.key==='Enter') addTodo()">
-        <button onclick="addTodo()">Thêm</button>
-      </div>
-
-      <div id="todoList"></div>
+    <div class="stat">
+      <div class="stat-number" id="completed">0%</div>
+      <div class="stat-label">TODAY'S PROGRESS</div>
     </div>
   </div>
 
-  <script>
-    // ===== BMI =====
-    function calculateBMI() {
-      const height = parseFloat(document.getElementById('height').value);
-      const weight = parseFloat(document.getElementById('weight').value);
-      const resultBox = document.getElementById('result');
+  <div class="section-label">YOUR CONSISTENCY RANK</div>
+  <div class="rank" id="rankName">STARTER</div>
+  <div class="rank-label" id="rankLabel">100% TIER</div>
 
-      if (!height || !weight || height < 100 || weight < 30) {
-        alert('Vui lòng nhập chiều cao và cân nặng hợp lệ');
-        return;
-      }
+  <div class="progress-track">
+    <div class="progress-fill" id="rankProgress"></div>
+  </div>
+  <p class="muted" id="rankDescription">
+    Start building your consistency today.
+  </p>
+</section>
 
-      const heightM = height / 100;
-      const bmi = weight / (heightM * heightM);
-      const bmiRounded = bmi.toFixed(1);
+<!-- CHECKLIST -->
+<section class="card">
+  <h2>Daily Checklist</h2>
+  <p class="muted">Small actions. Consistent progress.</p>
 
-      let status = '';
-      let advice = '';
-      let className = '';
+  <div class="row">
+    <input id="todoInput" type="text"
+      placeholder="Add a daily habit..."
+      maxlength="80">
+    <button class="secondary" onclick="addTodo()">ADD</button>
+  </div>
 
-      if (bmi < 18.5) {
-        status = 'Gầy (Underweight)';
-        advice = 'Nên tăng khẩu phần ăn, tập trung vào protein và tập gym tăng cơ.';
-        className = 'underweight';
-      } else if (bmi < 25) {
-        status = 'Bình thường (Normal)';
-        advice = 'Duy trì thói quen hiện tại. Tiếp tục kỷ luật.';
-        className = 'normal';
-      } else if (bmi < 30) {
-        status = 'Thừa cân (Overweight)';
-        advice = 'Giảm tinh bột và đường. Tăng cardio + tập tạ. Kiểm soát khẩu phần.';
-        className = 'overweight';
-      } else {
-        status = 'Béo phì (Obese)';
-        advice = 'Cần thay đổi nghiêm túc. Giảm calo, cắt đồ ngọt, tập luyện đều đặn.';
-        className = 'obese';
-      }
+  <div id="todoList"></div>
 
-      document.getElementById('bmiValue').innerText = bmiRounded;
-      document.getElementById('bmiStatus').innerText = status;
-      document.getElementById('advice').innerText = advice;
+  <div class="progress-track">
+    <div class="progress-fill" id="dailyProgress"></div>
+  </div>
+  <p class="muted" id="dailyText">0 of 0 completed</p>
+</section>
 
-      resultBox.className = 'result show ' + className;
+<!-- PREMIUM -->
+<section class="card premium">
+  <div class="section-label">EXCLUSIVE EXPERIENCE</div>
+  <div class="premium-title">PREMIUM</div>
+  <div class="coming">COMING SOON</div>
+
+  <p class="muted">
+    Take your personal development journey further.
+  </p>
+
+  <ul>
+    <li>Advanced Progress Analytics</li>
+    <li>Custom Habit Programs</li>
+    <li>Exclusive Themes</li>
+    <li>Advanced Achievement System</li>
+    <li>More Premium Features</li>
+  </ul>
+
+  <button disabled>NOT AVAILABLE YET</button>
+</section>
+
+<!-- BMI -->
+<section class="card">
+  <h2>Health Reference</h2>
+  <p class="muted">
+    BMI is a general screening measurement, not a diagnosis.
+    For people under 18, interpretation requires age- and
+    sex-specific growth charts.
+  </p>
+
+  <label class="muted">Height (cm)</label>
+  <input id="height" type="number" placeholder="Enter height">
+
+  <label class="muted">Weight (kg)</label>
+  <input id="weight" type="number" placeholder="Enter weight">
+
+  <button class="primary" onclick="calculateBMI()">
+    CALCULATE BMI
+  </button>
+
+  <div class="bmi-result" id="bmiResult"></div>
+</section>
+
+<footer>
+  STAY HARD. KEEP BUILDING.
+  <br><br>
+  MR.GIIBYE FITNESS © 2026
+</footer>
+
+</div>
+
+<script>
+const today = () => new Date().toLocaleDateString("en-CA");
+
+let todos = JSON.parse(localStorage.getItem("mgTodos") || "[]");
+let history = JSON.parse(localStorage.getItem("mgHistory") || "[]");
+
+function save() {
+  localStorage.setItem("mgTodos", JSON.stringify(todos));
+  localStorage.setItem("mgHistory", JSON.stringify(history));
+}
+
+function addTodo() {
+  const input = document.getElementById("todoInput");
+  const value = input.value.trim();
+
+  if (!value) return;
+
+  todos.push({
+    text:value,
+    done:false,
+    date:today()
+  });
+
+  input.value = "";
+  save();
+  render();
+}
+
+function toggleTodo(index) {
+  todos[index].done = !todos[index].done;
+  save();
+  render();
+}
+
+function deleteTodo(index) {
+  todos.splice(index,1);
+  save();
+  render();
+}
+
+function render() {
+  const list = document.getElementById("todoList");
+
+  if (!todos.length) {
+    list.innerHTML = '<div class="empty">No habits added yet.</div>';
+  } else {
+    list.innerHTML = todos.map((todo,index) => `
+      <div class="todo-item ${todo.done ? "done" : ""}">
+        <input type="checkbox"
+          ${todo.done ? "checked" : ""}
+          onchange="toggleTodo(${index})">
+        <span></span>
+        <button class="delete-btn"
+          onclick="deleteTodo(${index})">×</button>
+      </div>
+    `).join("");
+
+    list.querySelectorAll(".todo-item span").forEach((el,index) => {
+      el.textContent = todos[index].text;
+    });
+  }
+
+  const total = todos.length;
+  const done = todos.filter(t => t.done).length;
+  const percent = total ? Math.round(done/total*100) : 0;
+
+  document.getElementById("completed").textContent = percent+"%";
+  document.getElementById("dailyProgress").style.width = percent+"%";
+  document.getElementById("dailyText").textContent =
+    `${done} of ${total} completed`;
+
+  updateStreak();
+  updateRank();
+}
+
+function updateStreak() {
+  const day = today();
+
+  if (todos.length && todos.every(t => t.done)) {
+    if (!history.includes(day)) {
+      history.push(day);
     }
+  }
 
-    // ===== CHECKLIST =====
-    let todos = JSON.parse(localStorage.getItem('todos') || '[]');
+  save();
 
-    function saveTodos() {
-      localStorage.setItem('todos', JSON.stringify(todos));
+  let streak = 0;
+  const dates = new Set(history);
+  let date = new Date();
+
+  if (!dates.has(today())) {
+    date.setDate(date.getDate()-1);
+  }
+
+  while (dates.has(date.toLocaleDateString("en-CA"))) {
+    streak++;
+    date.setDate(date.getDate()-1);
+  }
+
+  document.getElementById("streak").textContent = streak;
+  return streak;
+}
+
+function updateRank() {
+  const streak = history.length ? getCurrentStreak() : 0;
+
+  const ranks = [
+    {days:0,name:"STARTER",tier:"100% TIER"},
+    {days:3,name:"BUILDER",tier:"50% TIER"},
+    {days:7,name:"DISCIPLINED",tier:"25% TIER"},
+    {days:14,name:"ELITE",tier:"10% TIER"},
+    {days:30,name:"TOP 1% ELITE",tier:"1% TIER"}
+  ];
+
+  let current = ranks[0];
+  let next = ranks[1];
+
+  for (let i=0;i<ranks.length;i++) {
+    if (streak >= ranks[i].days) {
+      current = ranks[i];
+      next = ranks[i+1] || null;
     }
+  }
 
-    function renderTodos() {
-      const list = document.getElementById('todoList');
-      
-      if (todos.length === 0) {
-        list.innerHTML = '<div class="empty">Chưa có việc nào</div>';
-        return;
-      }
+  document.getElementById("rankName").textContent = current.name;
+  document.getElementById("rankLabel").textContent = current.tier;
 
-      list.innerHTML = todos.map((todo, index) => `
-        <div class="todo-item ${todo.done ? 'done' : ''}">
-          <input type="checkbox" \( {todo.done ? 'checked' : ''} onchange="toggleTodo( \){index})">
-          <span>${todo.text}</span>
-          <button class="delete-btn" onclick="deleteTodo(${index})">×</button>
-        </div>
-      `).join('');
-    }
+  let progress = 100;
 
-    function addTodo() {
-      const input = document.getElementById('todoInput');
-      const text = input.value.trim();
-      
-      if (!text) return;
+  if (next) {
+    progress = Math.min(100,
+      ((streak-current.days)/(next.days-current.days))*100
+    );
+  }
 
-      todos.push({ text, done: false });
-      saveTodos();
-      renderTodos();
-      input.value = '';
-      input.focus();
-    }
+  document.getElementById("rankProgress").style.width =
+    progress+"%";
 
-    function toggleTodo(index) {
-      todos[index].done = !todos[index].done;
-      saveTodos();
-      renderTodos();
-    }
+  document.getElementById("rankDescription").textContent =
+    next
+    ? `${next.days-streak} more completed day(s) to reach ${next.name}.`
+    : "30-day milestone achieved. Keep building your habits.";
+}
 
-    function deleteTodo(index) {
-      todos.splice(index, 1);
-      saveTodos();
-      renderTodos();
-    }
+function getCurrentStreak() {
+  const dates = new Set(history);
+  let date = new Date();
 
-    // Khởi tạo
-    renderTodos();
-  </script>
+  if (!dates.has(today())) {
+    date.setDate(date.getDate()-1);
+  }
+
+  let streak = 0;
+
+  while (dates.has(date.toLocaleDateString("en-CA"))) {
+    streak++;
+    date.setDate(date.getDate()-1);
+  }
+
+  return streak;
+}
+
+function calculateBMI() {
+  const h = Number(document.getElementById("height").value);
+  const w = Number(document.getElementById("weight").value);
+  const result = document.getElementById("bmiResult");
+
+  if (!h || !w || h <= 0 || w <= 0) {
+    alert("Please enter valid height and weight.");
+    return;
+  }
+
+  const bmi = (w/((h/100)**2)).toFixed(1);
+
+  result.style.display = "block";
+  result.textContent =
+    `Your BMI: ${bmi}. This number is a general reference only. `+
+    `For people under 18, ask a qualified healthcare professional `+
+    `to interpret BMI using age- and sex-specific growth charts.`;
+}
+
+document.getElementById("todoInput")
+  .addEventListener("keydown",event => {
+    if (event.key === "Enter") addTodo();
+  });
+
+render();
+</script>
 </body>
+</html>
 </html>
