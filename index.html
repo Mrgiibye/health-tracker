@@ -1,4 +1,97 @@
+<script>
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
 
+const sb = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+function showMessage(message) {
+  document.getElementById("authMessage").textContent = message;
+}
+
+async function signUp() {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  if (!email || password.length < 8) {
+    showMessage("Enter an email and a password of at least 8 characters.");
+    return;
+  }
+
+  const { error } = await sb.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: window.location.href
+    }
+  });
+
+  if (error) {
+    showMessage(error.message);
+  } else {
+    showMessage("Check your email for the confirmation link.");
+  }
+}
+
+async function signIn() {
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+
+  const { error } = await sb.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    showMessage(error.message);
+  }
+}
+
+async function googleLogin() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.href
+    }
+  });
+
+  if (error) showMessage(error.message);
+}
+
+async function logOut() {
+  const { error } = await sb.auth.signOut();
+
+  if (error) showMessage(error.message);
+}
+
+async function handleAuth(session) {
+  const authPanel = document.getElementById("authPanel");
+  const appContent = document.getElementById("appContent");
+
+  if (session) {
+    authPanel.style.display = "none";
+    appContent.style.display = "block";
+
+    document.getElementById("rankDescription").textContent =
+      "Welcome, " + (session.user.email || "Member");
+
+    await loadCloudData(session.user.id);
+  } else {
+    authPanel.style.display = "block";
+    appContent.style.display = "none";
+  }
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  setTimeout(() => handleAuth(session), 0);
+});
+
+sb.auth.getSession().then(({ data }) => {
+  handleAuth(data.session);
+});
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
