@@ -1,736 +1,815 @@
-<script> <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
-const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
-
-const sb = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-function showMessage(message) {
-  document.getElementById("authMessage").textContent = message;
-}
-
-async function signUp() {
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-
-  if (!email || password.length < 8) {
-    showMessage("Enter an email and a password of at least 8 characters.");
-    return;
-  }
-
-  const { error } = await sb.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: window.location.href
-    }
-  });
-
-  if (error) {
-    showMessage(error.message);
-  } else {
-    showMessage("Check your email for the confirmation link.");
-  }
-}
-
-async function signIn() {
-  const email = document.getElementById("authEmail").value.trim();
-  const password = document.getElementById("authPassword").value;
-
-  const { error } = await sb.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    showMessage(error.message);
-  }
-}
-
-async function googleLogin() {
-  const { error } = await sb.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: window.location.href
-    }
-  });
-
-  if (error) showMessage(error.message);
-}
-
-async function logOut() {
-  const { error } = await sb.auth.signOut();
-
-  if (error) showMessage(error.message);
-}
-
-async function handleAuth(session) {
-  const authPanel = document.getElementById("authPanel");
-  const appContent = document.getElementById("appContent");
-
-  if (session) {
-    authPanel.style.display = "none";
-    appContent.style.display = "block";
-
-    document.getElementById("rankDescription").textContent =
-      "Welcome, " + (session.user.email || "Member");
-
-    await loadCloudData(session.user.id);
-  } else {
-    authPanel.style.display = "block";
-    appContent.style.display = "none";
-  }
-}
-
-sb.auth.onAuthStateChange((event, session) => {
-  setTimeout(() => handleAuth(session), 0);
-});
-
-sb.auth.getSession().then(({ data }) => {
-  handleAuth(data.session);
-});
-</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080808">
-<title>MR.GIIBYE FITNESS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="MR.GIIBYE FITNESS — Discipline. Consistency. Progress.">
+  <title>MR.GIIBYE FITNESS</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-:root {
-  --bg:#080808;
-  --card:#141414;
-  --border:#292929;
-  --muted:#888;
-  --white:#fff;
-  --soft:#c7c7c7;
-}
+  <style>
+    :root {
+      --bg: #080808;
+      --panel: #111;
+      --panel2: #171717;
+      --white: #f5f5f5;
+      --muted: #858585;
+      --line: #292929;
+      --radius: 20px;
+    }
 
-* {
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial, sans-serif;
-}
+    * { box-sizing: border-box; }
 
-body {
-  background:var(--bg);
-  color:var(--white);
-  min-height:100vh;
-  padding:22px 16px 50px;
-}
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Inter, Arial, sans-serif;
+      min-height: 100vh;
+    }
 
-.container {
-  max-width:520px;
-  margin:auto;
-}
+    button, input { font: inherit; }
 
-header {
-  text-align:center;
-  padding:24px 0 28px;
-  animation:fadeDown .8s ease both;
-}
+    button {
+      cursor: pointer;
+      transition: .25s ease;
+    }
 
-.logo {
-  font-size:27px;
-  font-weight:900;
-  letter-spacing:3px;
-}
+    button:hover { transform: translateY(-2px); }
 
-.subtitle {
-  color:var(--muted);
-  font-size:11px;
-  letter-spacing:3px;
-  margin-top:10px;
-}
+    .hidden { display: none !important; }
 
-.tagline {
-  font-size:10px;
-  color:#aaa;
-  letter-spacing:2px;
-  margin-top:15px;
-}
+    .container {
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 28px 0 70px;
+    }
 
-.card {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:17px;
-  padding:20px;
-  margin-bottom:16px;
-  animation:fadeUp .65s ease both;
-  transition:border-color .25s, transform .25s;
-}
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 55px;
+    }
 
-.card:hover {
-  border-color:#555;
-  transform:translateY(-2px);
-}
+    .brand {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
 
-.card h2 {
-  font-size:16px;
-  letter-spacing:1px;
-  margin-bottom:17px;
-}
+    .brand span { color: #777; }
 
-.muted {
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.6;
-}
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+    }
 
-.rank {
-  font-size:23px;
-  font-weight:900;
-  letter-spacing:2px;
-  margin:12px 0 7px;
-}
+    .hero {
+      padding: 48px 35px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: linear-gradient(135deg, #1b1b1b, #090909 70%);
+      margin-bottom: 24px;
+      animation: appear .8s ease both;
+    }
 
-.rank-label {
-  font-size:11px;
-  color:#aaa;
-  letter-spacing:2px;
-}
+    .eyebrow {
+      color: #aaa;
+      letter-spacing: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
 
-.progress-track {
-  width:100%;
-  height:7px;
-  background:#292929;
-  border-radius:20px;
-  overflow:hidden;
-  margin:15px 0 9px;
-}
+    h1 {
+      font-size: clamp(38px, 8vw, 76px);
+      line-height: .98;
+      letter-spacing: -4px;
+      margin: 20px 0;
+      font-weight: 900;
+    }
 
-.progress-fill {
-  height:100%;
-  width:0;
-  background:white;
-  border-radius:20px;
-  transition:width 1s ease;
-}
+    .hero p {
+      color: #aaa;
+      letter-spacing: 2px;
+      font-size: 12px;
+    }
 
-.stats {
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  margin-bottom:16px;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
 
-.stat {
-  background:#101010;
-  border:1px solid var(--border);
-  border-radius:13px;
-  padding:15px;
-}
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 25px;
+      animation: appear .7s ease both;
+    }
 
-.stat-number {
-  font-size:25px;
-  font-weight:800;
-}
+    .card h2 {
+      font-size: 17px;
+      margin: 0 0 18px;
+    }
 
-.stat-label {
-  font-size:10px;
-  color:var(--muted);
-  margin-top:6px;
-  letter-spacing:1px;
-}
+    .muted { color: var(--muted); }
 
-input {
-  width:100%;
-  background:#090909;
-  border:1px solid #333;
-  color:white;
-  border-radius:9px;
-  padding:13px;
-  margin:7px 0 13px;
-  outline:none;
-  font-size:14px;
-}
+    .field {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: white;
+      background: #090909;
+      outline: none;
+      margin: 7px 0;
+    }
 
-input:focus {
-  border-color:#aaa;
-}
+    .field:focus { border-color: #aaa; }
 
-button {
-  border:0;
-  border-radius:9px;
-  padding:13px 15px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.2s;
-}
+    .btn {
+      border: 1px solid white;
+      background: white;
+      color: black;
+      border-radius: 12px;
+      padding: 13px 18px;
+      font-weight: 800;
+      width: 100%;
+      margin-top: 10px;
+    }
 
-button:active {
-  transform:scale(.96);
-}
+    .btn.secondary {
+      color: white;
+      background: transparent;
+      border-color: #444;
+    }
 
-.primary {
-  width:100%;
-  background:white;
-  color:black;
-}
+    .btn.small {
+      width: auto;
+      padding: 9px 13px;
+      font-size: 12px;
+    }
 
-.primary:hover {
-  background:#ccc;
-}
+    .auth-wrap {
+      width: min(430px, 92%);
+      margin: 9vh auto;
+    }
 
-.secondary {
-  background:#292929;
-  color:white;
-}
+    .auth-wrap .card { padding: 30px; }
 
-.section-label {
-  color:#aaa;
-  font-size:10px;
-  letter-spacing:2px;
-  margin-bottom:10px;
-}
+    .auth-wrap h1 {
+      font-size: 34px;
+      letter-spacing: -1px;
+    }
 
-.todo-item {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:13px 0;
-  border-bottom:1px solid #292929;
-  animation:fadeUp .3s ease both;
-}
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
 
-.todo-item:last-child {
-  border-bottom:none;
-}
+    .tabs button {
+      flex: 1;
+      background: #181818;
+      color: #aaa;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 11px;
+    }
 
-.todo-item input {
-  width:19px;
-  height:19px;
-  margin:0;
-  accent-color:white;
-  flex-shrink:0;
-}
+    .tabs button.active {
+      background: white;
+      color: black;
+    }
 
-.todo-item span {
-  flex:1;
-  font-size:13px;
-  overflow-wrap:anywhere;
-}
+    .section-title {
+      margin: 34px 0 15px;
+      font-size: 22px;
+      letter-spacing: -1px;
+    }
 
-.todo-item.done span {
-  color:#777;
-  text-decoration:line-through;
-}
+    .habit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
 
-.delete-btn {
-  color:#888;
-  background:none;
-  padding:5px 9px;
-  font-size:17px;
-}
+    .habit-row:last-child { border-bottom: 0; }
 
-.delete-btn:hover {
-  color:white;
-}
+    .habit-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
 
-.row {
-  display:flex;
-  gap:8px;
-}
+    .habit-left span {
+      overflow-wrap: anywhere;
+    }
 
-.row input {
-  flex:1;
-  min-width:0;
-}
+    .habit-left input {
+      accent-color: white;
+      width: 18px;
+      height: 18px;
+    }
 
-.row button {
-  margin-top:7px;
-  height:43px;
-}
+    .delete {
+      background: transparent;
+      color: #999;
+      border: 0;
+      font-size: 18px;
+    }
 
-.empty {
-  text-align:center;
-  color:#777;
-  padding:20px 0;
-  font-size:13px;
-}
+    .progress-track {
+      height: 9px;
+      background: #292929;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 17px 0;
+    }
 
-.premium {
-  background:linear-gradient(140deg,#1b1b1b,#090909);
-  border:1px solid #555;
-}
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: white;
+      border-radius: 20px;
+      transition: width .5s ease;
+    }
 
-.premium-title {
-  font-size:22px;
-  font-weight:900;
-  letter-spacing:3px;
-  margin:12px 0;
-}
+    .stat-number {
+      font-size: 38px;
+      font-weight: 900;
+      margin: 8px 0;
+    }
 
-.coming {
-  display:inline-block;
-  border:1px solid #777;
-  color:#ddd;
-  padding:6px 10px;
-  font-size:9px;
-  letter-spacing:2px;
-  border-radius:30px;
-  margin-bottom:14px;
-}
+    .rank {
+      font-size: 25px;
+      font-weight: 900;
+      margin: 12px 0 5px;
+    }
 
-.premium ul {
-  list-style:none;
-  color:#bbb;
-  font-size:12px;
-  line-height:2.3;
-  margin:12px 0;
-}
+    .photo-preview {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      border-radius: 14px;
+      margin-top: 12px;
+    }
 
-.premium li::before {
-  content:"✦ ";
-  color:white;
-}
+    .footer {
+      text-align: center;
+      color: #666;
+      font-size: 10px;
+      letter-spacing: 3px;
+      margin-top: 55px;
+    }
 
-.premium button {
-  width:100%;
-  background:#292929;
-  color:#aaa;
-  cursor:not-allowed;
-}
+    .message {
+      color: #bbb;
+      font-size: 13px;
+      min-height: 18px;
+      margin-top: 12px;
+      overflow-wrap: anywhere;
+    }
 
-.bmi-result {
-  margin-top:13px;
-  padding:15px;
-  background:#090909;
-  border-radius:10px;
-  display:none;
-  line-height:1.6;
-  font-size:13px;
-}
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(18px); filter: blur(5px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
 
-footer {
-  text-align:center;
-  padding:24px 0;
-  color:#666;
-  font-size:10px;
-  letter-spacing:2px;
-}
+    @media (max-width: 650px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero { padding: 35px 23px; }
+      h1 { letter-spacing: -2px; }
+      .topbar { margin-bottom: 30px; }
+    }
 
-@keyframes fadeUp {
-  from {opacity:0; transform:translateY(18px);}
-  to {opacity:1; transform:translateY(0);}
-}
-
-@keyframes fadeDown {
-  from {opacity:0; transform:translateY(-15px);}
-  to {opacity:1; transform:translateY(0);}
-}
-
-@media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {
-    animation:none!important;
-    transition:none!important;
-  }
-}
-</style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
 
-<header>
-  <div class="logo">MR.GIIBYE</div>
-  <div class="subtitle">FITNESS & LIFESTYLE</div>
-  <div class="tagline">DISCIPLINE. CONSISTENCY. PROGRESS.</div>
-</header>
+  <div id="authScreen" class="auth-wrap">
+    <div class="brand">MR.<span>GIIBYE</span> FITNESS</div>
+    <div class="card" style="margin-top:22px">
+      <div class="eyebrow">DISCIPLINE STARTS HERE</div>
+      <h1>BUILD YOUR<br>BETTER SELF.</h1>
+      <p class="muted">Sign in to save and sync your progress.</p>
 
-<!-- DASHBOARD -->
-<section class="card">
-  <div class="section-label">YOUR DASHBOARD</div>
-  <h2>Consistency Tracker</h2>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-number" id="streak">0</div>
-      <div class="stat-label">CURRENT STREAK</div>
-    </div>
-    <div class="stat">
-      <div class="stat-number" id="completed">0%</div>
-      <div class="stat-label">TODAY'S PROGRESS</div>
-    </div>
-  </div>
-
-  <div class="section-label">YOUR CONSISTENCY RANK</div>
-  <div class="rank" id="rankName">STARTER</div>
-  <div class="rank-label" id="rankLabel">100% TIER</div>
-
-  <div class="progress-track">
-    <div class="progress-fill" id="rankProgress"></div>
-  </div>
-  <p class="muted" id="rankDescription">
-    Start building your consistency today.
-  </p>
-</section>
-
-<!-- CHECKLIST -->
-<section class="card">
-  <h2>Daily Checklist</h2>
-  <p class="muted">Small actions. Consistent progress.</p>
-
-  <div class="row">
-    <input id="todoInput" type="text"
-      placeholder="Add a daily habit..."
-      maxlength="80">
-    <button class="secondary" onclick="addTodo()">ADD</button>
-  </div>
-
-  <div id="todoList"></div>
-
-  <div class="progress-track">
-    <div class="progress-fill" id="dailyProgress"></div>
-  </div>
-  <p class="muted" id="dailyText">0 of 0 completed</p>
-</section>
-
-<!-- PREMIUM -->
-<section class="card premium">
-  <div class="section-label">EXCLUSIVE EXPERIENCE</div>
-  <div class="premium-title">PREMIUM</div>
-  <div class="coming">COMING SOON</div>
-
-  <p class="muted">
-    Take your personal development journey further.
-  </p>
-
-  <ul>
-    <li>Advanced Progress Analytics</li>
-    <li>Custom Habit Programs</li>
-    <li>Exclusive Themes</li>
-    <li>Advanced Achievement System</li>
-    <li>More Premium Features</li>
-  </ul>
-
-  <button disabled>NOT AVAILABLE YET</button>
-</section>
-
-<!-- BMI -->
-<section class="card">
-  <h2>Health Reference</h2>
-  <p class="muted">
-    BMI is a general screening measurement, not a diagnosis.
-    For people under 18, interpretation requires age- and
-    sex-specific growth charts.
-  </p>
-
-  <label class="muted">Height (cm)</label>
-  <input id="height" type="number" placeholder="Enter height">
-
-  <label class="muted">Weight (kg)</label>
-  <input id="weight" type="number" placeholder="Enter weight">
-
-  <button class="primary" onclick="calculateBMI()">
-    CALCULATE BMI
-  </button>
-
-  <div class="bmi-result" id="bmiResult"></div>
-</section>
-
-<footer>
-  STAY HARD. KEEP BUILDING.
-  <br><br>
-  MR.GIIBYE FITNESS © 2026
-</footer>
-
-</div>
-
-<script>
-const today = () => new Date().toLocaleDateString("en-CA");
-
-let todos = JSON.parse(localStorage.getItem("mgTodos") || "[]");
-let history = JSON.parse(localStorage.getItem("mgHistory") || "[]");
-
-function save() {
-  localStorage.setItem("mgTodos", JSON.stringify(todos));
-  localStorage.setItem("mgHistory", JSON.stringify(history));
-}
-
-function addTodo() {
-  const input = document.getElementById("todoInput");
-  const value = input.value.trim();
-
-  if (!value) return;
-
-  todos.push({
-    text:value,
-    done:false,
-    date:today()
-  });
-
-  input.value = "";
-  save();
-  render();
-}
-
-function toggleTodo(index) {
-  todos[index].done = !todos[index].done;
-  save();
-  render();
-}
-
-function deleteTodo(index) {
-  todos.splice(index,1);
-  save();
-  render();
-}
-
-function render() {
-  const list = document.getElementById("todoList");
-
-  if (!todos.length) {
-    list.innerHTML = '<div class="empty">No habits added yet.</div>';
-  } else {
-    list.innerHTML = todos.map((todo,index) => `
-      <div class="todo-item ${todo.done ? "done" : ""}">
-        <input type="checkbox"
-          ${todo.done ? "checked" : ""}
-          onchange="toggleTodo(${index})">
-        <span></span>
-        <button class="delete-btn"
-          onclick="deleteTodo(${index})">×</button>
+      <div class="tabs">
+        <button id="loginTab" class="active" onclick="setAuthMode('login')">Login</button>
+        <button id="signupTab" onclick="setAuthMode('signup')">Sign up</button>
       </div>
-    `).join("");
 
-    list.querySelectorAll(".todo-item span").forEach((el,index) => {
-      el.textContent = todos[index].text;
+      <input id="email" class="field" type="email" placeholder="Email address" autocomplete="email">
+      <input id="password" class="field" type="password" placeholder="Password" autocomplete="current-password">
+
+      <button id="authButton" class="btn" onclick="submitAuth()">LOGIN</button>
+      <button class="btn secondary" onclick="googleLogin()">CONTINUE WITH GOOGLE</button>
+      <button class="btn secondary" onclick="resetPassword()">RESET PASSWORD</button>
+      <div id="authMessage" class="message"></div>
+    </div>
+  </div>
+
+  <main id="appScreen" class="container hidden">
+    <header class="topbar">
+      <div class="brand">MR.<span>GIIBYE</span> FITNESS</div>
+      <div style="text-align:right">
+        <div id="userEmail" class="status"></div>
+        <button class="btn secondary small" onclick="logout()">LOG OUT</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">YOUR PERSONAL PROGRESS SYSTEM</div>
+      <h1>DISCIPLINE.<br>CONSISTENCY.<br>PROGRESS.</h1>
+      <p>STAY HARD. KEEP MOVING FORWARD.</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Daily Progress</h2>
+        <div id="dailyPercent" class="stat-number">0%</div>
+        <div class="progress-track"><div id="dailyBar" class="progress-fill"></div></div>
+        <p id="dailyText" class="muted">Complete your daily habits.</p>
+      </section>
+
+      <section class="card">
+        <h2>Your Rank</h2>
+        <div id="rankName" class="rank">STARTER</div>
+        <p id="rankDescription" class="muted">Your journey begins today.</p>
+        <p class="muted">Completed days: <strong id="completedDays">0</strong></p>
+      </section>
+    </div>
+
+    <h2 class="section-title">DAILY CHECKLIST</h2>
+    <section class="card">
+      <div style="display:flex;gap:8px">
+        <input id="newHabit" class="field" placeholder="Add a healthy habit..." maxlength="70">
+        <button class="btn small" onclick="addHabit()">ADD</button>
+      </div>
+      <div id="habitList"></div>
+      <p class="muted" style="font-size:12px">Create habits that are realistic and healthy for you.</p>
+    </section>
+
+    <h2 class="section-title">MEAL JOURNAL</h2>
+    <section class="card">
+      <h2>Save a meal photo</h2>
+      <p class="muted">Add a photo and a note about your meal. This version does not automatically recognize food or calculate nutrition.</p>
+      <input id="mealPhoto" class="field" type="file" accept="image/*">
+      <input id="mealNote" class="field" placeholder="Meal notes (optional)" maxlength="150">
+      <img id="photoPreview" class="photo-preview hidden" alt="Meal preview">
+      <button class="btn" onclick="saveMealNote()">SAVE MEAL NOTE</button>
+      <div id="mealMessage" class="message"></div>
+    </section>
+
+    <h2 class="section-title">PROFILE</h2>
+    <section class="card">
+      <h2>Display name</h2>
+      <input id="displayName" class="field" placeholder="Your name" maxlength="40">
+      <button class="btn" onclick="saveProfile()">SAVE PROFILE</button>
+      <div id="profileMessage" class="message"></div>
+    </section>
+
+    <section class="card" style="margin-top:18px">
+      <h2>COMING SOON</h2>
+      <p class="muted">Smart reminders, advanced meal analysis and more features are planned for future updates.</p>
+      <div class="eyebrow">PREMIUM EXPERIENCE — NOT AVAILABLE YET</div>
+    </section>
+
+    <div class="footer">MR.GIIBYE FITNESS · STAY HARD</div>
+  </main>
+
+  <script>
+    // SUPABASE CONFIGURATION
+    const SUPABASE_URL = "https://jpusplueirbglxzjrldp.supabase.co";
+    const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUser = null;
+    let authMode = "login";
+    let appData = {
+      habits: [
+        { id: 1, name: "Drink enough water", done: false },
+        { id: 2, name: "Get enough sleep", done: false },
+        { id: 3, name: "Move your body", done: false },
+        { id: 4, name: "Learn something new", done: false }
+      ],
+      completedDates: [],
+      profile: { name: "" },
+      mealNotes: []
+    };
+
+    function localDate() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function showMessage(id, message) {
+      document.getElementById(id).textContent = message;
+    }
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      document.getElementById("loginTab").classList.toggle("active", mode === "login");
+      document.getElementById("signupTab").classList.toggle("active", mode === "signup");
+      document.getElementById("authButton").textContent = mode === "login" ? "LOGIN" : "CREATE ACCOUNT";
+      document.getElementById("password").autocomplete = mode === "login" ? "current-password" : "new-password";
+      showMessage("authMessage", "");
+    }
+
+    async function submitAuth() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!email || !password) {
+        showMessage("authMessage", "Enter your email and password.");
+        return;
+      }
+
+      showMessage("authMessage", "Please wait...");
+
+      const result = authMode === "signup"
+        ? await db.auth.signUp({ email, password })
+        : await db.auth.signInWithPassword({ email, password });
+
+      if (result.error) {
+        showMessage("authMessage", result.error.message);
+        return;
+      }
+
+      if (authMode === "signup" && !result.data.session) {
+        showMessage("authMessage", "Account created. Check your email to confirm your account, then log in.");
+      }
+    }
+
+    async function googleLogin() {
+      const { error } = await db.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.href.split("#")[0] }
+      });
+
+      if (error) showMessage("authMessage", error.message);
+    }
+
+    async function resetPassword() {
+      const email = document.getElementById("email").value.trim();
+      if (!email) {
+        showMessage("authMessage", "Enter your email address first.");
+        return;
+      }
+
+      const { error } = await db.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.href.split("#")[0]
+      });
+
+      showMessage("authMessage", error ? error.message : "Password reset email sent. Check your inbox.");
+    }
+
+    async function logout() {
+      await db.auth.signOut();
+    }
+
+    async function loadUserData() {
+      const { data, error } = await db
+        .from("user_data")
+        .select("data")
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        alert("Could not load your saved data. Please check your database setup.");
+        return;
+      }
+
+      if (data && data.data) {
+        appData = {
+          ...appData,
+          ...data.data,
+          profile: { ...appData.profile, ...(data.data.profile || {}) }
+        };
+      }
+
+      renderApp();
+    }
+
+    async function saveToCloud() {
+      if (!currentUser) return;
+
+      const { error } = await db.from("user_data").upsert({
+        user_id: currentUser.id,
+        data: appData,
+        updated_at: new Date().toISOString()
+      });
+
+      if (error) {
+        console.error(error);
+        alert("Sync failed. Please check your internet connection.");
+      }
+    }
+
+    function renderApp() {
+      document.getElementById("authScreen").classList.add("hidden");
+      document.getElementById("appScreen").classList.remove("hidden");
+      document.getElementById("userEmail").textContent = currentUser.email || "";
+      document.getElementById("displayName").value = appData.profile.name || "";
+
+      renderHabits();
+      renderProgress();
+    }
+
+    function renderHabits() {
+      const list = document.getElementById("habitList");
+      list.innerHTML = "";
+
+      appData.habits.forEach(habit => {
+        const row = document.createElement("div");
+        row.className = "habit-row";
+
+        const left = document.createElement("label");
+        left.className = "habit-left";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = Boolean(habit.done);
+        checkbox.addEventListener("change", async () => {
+          habit.done = checkbox.checked;
+          await updateCompletedDate();
+          renderHabits();
+          renderProgress();
+          await saveToCloud();
+        });
+
+        const name = document.createElement("span");
+        name.textContent = habit.name;
+        if (habit.done) name.style.textDecoration = "line-through";
+
+        left.append(checkbox, name);
+
+        const remove = document.createElement("button");
+        remove.className = "delete";
+        remove.textContent = "×";
+        remove.setAttribute("aria-label", "Delete habit");
+        remove.addEventListener("click", async () => {
+          appData.habits = appData.habits.filter(item => item.id !== habit.id);
+          await updateCompletedDate();
+          renderHabits();
+          renderProgress();
+          await saveToCloud();
+        });
+
+        row.append(left, remove);
+        list.append(row);
+      });
+    }
+
+    async function addHabit() {
+      const input = document.getElementById("newHabit");
+      const name = input.value.trim();
+
+      if (!name) return;
+
+      appData.habits.push({
+        id: Date.now(),
+        name,
+        done: false
+      });
+
+      input.value = "";
+      await updateCompletedDate();
+      renderHabits();
+      renderProgress();
+      await saveToCloud();
+    }
+
+    async function updateCompletedDate() {
+      const today = localDate();
+      const allDone = appData.habits.length > 0 && appData.habits.every(h => h.done);
+
+      appData.completedDates = appData.completedDates.filter(date => date !== today);
+
+      if (allDone) appData.completedDates.push(today);
+
+      appData.completedDates = [...new Set(appData.completedDates)];
+    }
+
+    function getRank(days) {
+      if (days >= 30) return ["TOP 1% ELITE", "30+ completed days milestone"];
+      if (days >= 14) return ["ELITE", "14+ completed days milestone"];
+      if (days >= 7) return ["DISCIPLINED", "7+ completed days milestone"];
+      if (days >= 3) return ["BUILDER", "3+ completed days milestone"];
+      return ["STARTER", "Your journey begins today."];
+    }
+
+    function renderProgress() {
+      const total = appData.habits.length;
+      const done = appData.habits.filter(h => h.done).length;
+      const percent = total ? Math.round(done / total * 100) : 0;
+      const days = appData.completedDates.length;
+      const rank = getRank(days);
+
+      document.getElementById("dailyPercent").textContent = percent + "%";
+      document.getElementById("dailyBar").style.width = percent + "%";
+      document.getElementById("dailyText").textContent = `${done} of ${total} habits completed today.`;
+      document.getElementById("completedDays").textContent = days;
+      document.getElementById("rankName").textContent = rank[0];
+      document.getElementById("rankDescription").textContent = rank[1];
+    }
+
+    async function saveProfile() {
+      appData.profile.name = document.getElementById("displayName").value.trim();
+      await saveToCloud();
+      showMessage("profileMessage", "Profile saved.");
+    }
+
+    document.getElementById("mealPhoto").addEventListener("change", event => {
+      const file = event.target.files[0];
+      const preview = document.getElementById("photoPreview");
+
+      if (!file) {
+        preview.classList.add("hidden");
+        return;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        showMessage("mealMessage", "Please select an image.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        preview.src = reader.result;
+        preview.classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
     });
-  }
 
-  const total = todos.length;
-  const done = todos.filter(t => t.done).length;
-  const percent = total ? Math.round(done/total*100) : 0;
+    async function saveMealNote() {
+      const note = document.getElementById("mealNote").value.trim();
+      const file = document.getElementById("mealPhoto").files[0];
 
-  document.getElementById("completed").textContent = percent+"%";
-  document.getElementById("dailyProgress").style.width = percent+"%";
-  document.getElementById("dailyText").textContent =
-    `${done} of ${total} completed`;
+      if (!file && !note) {
+        showMessage("mealMessage", "Add a photo or a note first.");
+        return;
+      }
 
-  updateStreak();
-  updateRank();
-}
+      appData.mealNotes.push({
+        note,
+        photoName: file ? file.name : "",
+        date: new Date().toISOString()
+      });
 
-function updateStreak() {
-  const day = today();
-
-  if (todos.length && todos.every(t => t.done)) {
-    if (!history.includes(day)) {
-      history.push(day);
+      await saveToCloud();
+      document.getElementById("mealNote").value = "";
+      document.getElementById("mealPhoto").value = "";
+      document.getElementById("photoPreview").classList.add("hidden");
+      showMessage("mealMessage", "Meal note saved. The photo itself is not uploaded.");
     }
-  }
 
-  save();
+    db.auth.onAuthStateChange(async (event, session) => {
+      currentUser = session ? session.user : null;
 
-  let streak = 0;
-  const dates = new Set(history);
-  let date = new Date();
+      if (currentUser) {
+        document.getElementById("authScreen").classList.add("hidden");
+        document.getElementById("appScreen").classList.remove("hidden");
+        await loadUserData();
+      } else {
+        document.getElementById("appScreen").classList.add("hidden");
+        document.getElementById("authScreen").classList.remove("hidden");
+      }
+    });
 
-  if (!dates.has(today())) {
-    date.setDate(date.getDate()-1);
-  }
-
-  while (dates.has(date.toLocaleDateString("en-CA"))) {
-    streak++;
-    date.setDate(date.getDate()-1);
-  }
-
-  document.getElementById("streak").textContent = streak;
-  return streak;
-}
-
-function updateRank() {
-  const streak = history.length ? getCurrentStreak() : 0;
-
-  const ranks = [
-    {days:0,name:"STARTER",tier:"100% TIER"},
-    {days:3,name:"BUILDER",tier:"50% TIER"},
-    {days:7,name:"DISCIPLINED",tier:"25% TIER"},
-    {days:14,name:"ELITE",tier:"10% TIER"},
-    {days:30,name:"TOP 1% ELITE",tier:"1% TIER"}
-  ];
-
-  let current = ranks[0];
-  let next = ranks[1];
-
-  for (let i=0;i<ranks.length;i++) {
-    if (streak >= ranks[i].days) {
-      current = ranks[i];
-      next = ranks[i+1] || null;
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(console.error);
+      });
     }
-  }
-
-  document.getElementById("rankName").textContent = current.name;
-  document.getElementById("rankLabel").textContent = current.tier;
-
-  let progress = 100;
-
-  if (next) {
-    progress = Math.min(100,
-      ((streak-current.days)/(next.days-current.days))*100
-    );
-  }
-
-  document.getElementById("rankProgress").style.width =
-    progress+"%";
-
-  document.getElementById("rankDescription").textContent =
-    next
-    ? `${next.days-streak} more completed day(s) to reach ${next.name}.`
-    : "30-day milestone achieved. Keep building your habits.";
-}
-
-function getCurrentStreak() {
-  const dates = new Set(history);
-  let date = new Date();
-
-  if (!dates.has(today())) {
-    date.setDate(date.getDate()-1);
-  }
-
-  let streak = 0;
-
-  while (dates.has(date.toLocaleDateString("en-CA"))) {
-    streak++;
-    date.setDate(date.getDate()-1);
-  }
-
-  return streak;
-}
-
-function calculateBMI() {
-  const h = Number(document.getElementById("height").value);
-  const w = Number(document.getElementById("weight").value);
-  const result = document.getElementById("bmiResult");
-
-  if (!h || !w || h <= 0 || w <= 0) {
-    alert("Please enter valid height and weight.");
-    return;
-  }
-
-  const bmi = (w/((h/100)**2)).toFixed(1);
-
-  result.style.display = "block";
-  result.textContent =
-    `Your BMI: ${bmi}. This number is a general reference only. `+
-    `For people under 18, ask a qualified healthcare professional `+
-    `to interpret BMI using age- and sex-specific growth charts.`;
-}
-
-document.getElementById("todoInput")
-  .addEventListener("keydown",event => {
-    if (event.key === "Enter") addTodo();
-  });
-
-render();
-</script>
+  </script>
 </body>
-</html>
-</html>
+</htm
+{
+  "name": "MR.GIIBYE FITNESS",
+  "short_name": "GIIBYE FITNESS",
+  "description": "Discipline. Consistency. Progress.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#080808",
+  "theme_color": "#080808",
+  "icons": [
+    {
+      "src": "https://placehold.co/192x192/080808/ffffff.png?text=MG",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://placehold.co/512x512/080808/ffffff.png?text=MG",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+} const CACHE_NAME = "mr-giibye-fitness-v1";
+
+const APP_FILES = [
+  "./",
+  "./index.html",
+  "./manifest.json"
+];
+
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      )
+    )  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", event => {
+  if (event.request.method !== "GET") return;
+
+  const url = new URL(event.request.url);
+
+  if (url.origin !== self.location.origin) return;
+
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request)) create table if not exists public.user_data (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.user_data enable row level security;
+
+drop policy if exists "Users can view their own data"
+on public.user_data;
+
+drop policy if exists "Users can insert their own data"
+on public.user_data;
+
+drop policy if exists "Users can update their own data"
+on public.user_data;
+
+create policy "Users can view their own data"
+on public.user_data
+for select
+to authenticated
+using (auth.uid() = user_id);
+
+create policy "Users can insert their own data"
+on public.user_data
+for insert
+to authenticated
+with check (auth.uid() = user_id);
+
+create policy "Users can update their own data"
+on public.user_data
+for update
+to authenticated
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+grant select, insert, update
+on public.user_data
+to authenticated;
+  );
+});</html>
