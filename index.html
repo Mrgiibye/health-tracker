@@ -708,8 +708,7 @@
     }
   </script>
 </body>
-</htm
-{
+</html> {
   "name": "MR.GIIBYE FITNESS",
   "short_name": "GIIBYE FITNESS",
   "description": "Discipline. Consistency. Progress.",
@@ -754,7 +753,8 @@ self.addEventListener("activate", event => {
           .filter(key => key !== CACHE_NAME)
           .map(key => caches.delete(key))
       )
-    )  );
+    )
+  );
   self.clients.claim();
 });
 
@@ -772,7 +772,10 @@ self.addEventListener("fetch", event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request)) create table if not exists public.user_data (
+      .catch(() => caches.match(event.request))
+  );
+});
+create table if not exists public.user_data (
   user_id uuid primary key references auth.users(id) on delete cascade,
   data jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now()
@@ -811,5 +814,3 @@ with check (auth.uid() = user_id);
 grant select, insert, update
 on public.user_data
 to authenticated;
-  );
-});</html>
