@@ -4,335 +4,479 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080808">
-<meta name="description" content="MR.GIIBYE FITNESS — Discipline. Consistency. Progress.">
 <title>MR.GIIBYE FITNESS</title>
-<link rel="manifest" href="./manifest.json">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-:root {
-  --bg:#070707;
-  --white:#f7f7f7;
-  --muted:#929292;
-  --line:rgba(255,255,255,.10);
-  --glass:rgba(255,255,255,.055);
-  --glass2:rgba(255,255,255,.09);
-}
-* {box-sizing:border-box}
-body {
+* {
+  box-sizing:border-box;
   margin:0;
+  padding:0;
+}
+
+body {
+  background:#050505;
+  color:white;
+  font-family:Inter,sans-serif;
   min-height:100vh;
-  color:var(--white);
-  background:
-    radial-gradient(ellipse at 15% 5%,rgba(255,255,255,.09),transparent 35%),
-    radial-gradient(ellipse at 90% 45%,rgba(180,180,180,.07),transparent 35%),
-    #070707;
-  font-family:Inter,Arial,sans-serif;
 }
-button,input {font:inherit}
-button {cursor:pointer;transition:.25s}
-button:hover {transform:translateY(-2px)}
-.hidden {display:none!important}
-.container {width:min(1050px,92%);margin:auto;padding:25px 0 110px}
-.topbar {display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}
-.brand {font-weight:900;font-size:18px;letter-spacing:2px}
-.brand span {color:#888}
-.status {color:var(--muted);font-size:11px}
-.glass {
-  background:linear-gradient(135deg,rgba(255,255,255,.105),rgba(255,255,255,.025));
-  border:1px solid rgba(255,255,255,.13);
-  box-shadow:0 12px 40px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.07);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  border-radius:24px;
+
+button,input,textarea {
+  font-family:inherit;
 }
-.hero {
-  position:relative;
-  overflow:hidden;
-  padding:35px 28px;
-  margin-bottom:18px;
-  min-height:220px;
-  animation:appear .7s ease both;
+
+button {
+  cursor:pointer;
 }
-.hero:after {
-  content:"";
-  position:absolute;
-  width:240px;height:240px;
-  right:-100px;top:-110px;
-  border-radius:50%;
-  background:rgba(255,255,255,.09);
-  filter:blur(50px);
+
+.hidden {
+  display:none !important;
 }
-.eyebrow {font-size:10px;letter-spacing:3px;color:#aaa;font-weight:700}
-.hero h1 {font-size:clamp(35px,8vw,65px);line-height:1.02;letter-spacing:-3px;margin:20px 0 12px;font-weight:900}
-.hero p {font-size:11px;letter-spacing:2px;color:#aaa}
-.hero-name {font-size:13px;color:#aaa}
-.grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.card {padding:22px;animation:appear .6s ease both}
-.card h2 {font-size:15px;margin:0 0 16px}
-.section-title {font-size:19px;letter-spacing:-.7px;margin:28px 0 14px}
-.muted {color:var(--muted);font-size:12px;line-height:1.7}
-.field {
-  width:100%;padding:14px;
-  border:1px solid var(--line);border-radius:13px;
-  background:rgba(0,0,0,.35);color:white;
-  outline:none;margin:7px 0;
+
+.container {
+  max-width:600px;
+  margin:auto;
+  padding:22px;
 }
-.field:focus {border-color:#aaa}
+
+.logo {
+  font-size:25px;
+  font-weight:800;
+  letter-spacing:2px;
+}
+
+.sub {
+  color:#888;
+  font-size:13px;
+  margin-top:7px;
+}
+
+.card {
+  background:#111;
+  border:1px solid #242424;
+  border-radius:18px;
+  padding:20px;
+  margin-top:18px;
+}
+
+input,textarea {
+  width:100%;
+  background:#080808;
+  color:white;
+  border:1px solid #333;
+  border-radius:12px;
+  padding:14px;
+  margin-top:12px;
+  outline:none;
+}
+
+input:focus,textarea:focus {
+  border-color:#888;
+}
+
+textarea {
+  resize:vertical;
+  min-height:100px;
+}
+
 .btn {
-  border:1px solid white;background:#f5f5f5;color:#080808;
-  border-radius:13px;padding:13px 17px;
-  font-weight:800;width:100%;margin-top:9px;
+  background:white;
+  color:black;
+  border:none;
+  border-radius:12px;
+  padding:14px;
+  width:100%;
+  font-weight:700;
+  margin-top:12px;
 }
-.btn.secondary {background:transparent;color:white;border-color:#444}
-.btn.small {width:auto;padding:10px 14px;font-size:11px}
-.auth-wrap {width:min(430px,92%);margin:8vh auto}
-.auth-wrap .card {padding:28px}
-.auth-wrap h1 {font-size:34px;letter-spacing:-2px;line-height:1.05}
-.tabs {display:flex;gap:8px;margin:18px 0}
-.tabs button {
-  flex:1;background:rgba(255,255,255,.05);color:#aaa;
-  border:1px solid var(--line);border-radius:12px;padding:12px
-}
-.tabs button.active {background:#eee;color:#111}
-.message {color:#bbb;font-size:12px;min-height:18px;margin-top:12px;overflow-wrap:anywhere}
 
-/* Dashboard */
-.stats-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
-.stat-number {font-size:34px;font-weight:900;letter-spacing:-2px;margin:8px 0}
-.progress-track {height:7px;background:#333;border-radius:20px;overflow:hidden;margin:15px 0}
-.progress-fill {height:100%;width:0;background:linear-gradient(90deg,#777,#fff);border-radius:20px;transition:width .6s}
-.circle-wrap {display:flex;align-items:center;gap:17px}
-.circle {
-  width:94px;height:94px;border-radius:50%;
-  display:grid;place-items:center;flex-shrink:0;
-  background:conic-gradient(#eee 0deg, #eee 0deg,rgba(255,255,255,.10) 0deg);
-  position:relative;
+.btn:disabled {
+  opacity:.5;
 }
-.circle:before {content:"";position:absolute;inset:8px;background:#111;border-radius:50%}
-.circle strong {position:relative;font-size:19px}
-.rank {font-size:23px;font-weight:900;margin:10px 0}
-.habit-row {
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;padding:15px 0;border-bottom:1px solid var(--line);
-}
-.habit-row:last-child {border-bottom:0}
-.habit-left {display:flex;align-items:center;gap:12px;min-width:0}
-.habit-left span {overflow-wrap:anywhere;font-size:13px}
-.habit-left input {accent-color:white;width:19px;height:19px;flex-shrink:0}
-.habit-left input:checked + span {color:#888;text-decoration:line-through}
-.delete {background:transparent;color:#999;border:0;font-size:20px}
-.add-row {display:flex;gap:8px;align-items:center}
-.add-row .field {min-width:0}
-.photo-preview {width:100%;max-height:260px;object-fit:cover;border-radius:15px;margin-top:12px}
-.rank-box {text-align:center;padding:26px}
-.rank-icon {font-size:32px;margin-bottom:10px}
-.rank-description {font-size:12px;color:#999}
 
-/* Navigation */
-.bottom-nav {
-  position:fixed;z-index:20;bottom:15px;left:50%;
-  transform:translateX(-50%);
-  width:min(500px,92%);
-  display:grid;grid-template-columns:repeat(4,1fr);
-  padding:9px;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:22px;
-  background:rgba(18,18,18,.82);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
-  box-shadow:0 10px 40px rgba(0,0,0,.6);
+.secondary {
+  background:#171717;
+  color:white;
+  border:1px solid #333;
 }
-.nav-item {
-  border:0;background:transparent;color:#777;
-  padding:9px 3px;border-radius:14px;
-  font-size:10px;font-weight:700;
+
+.tabs {
+  display:flex;
+  gap:10px;
+  margin-top:20px;
 }
-.nav-item .nav-icon {display:block;font-size:18px;margin-bottom:5px}
-.nav-item.active {background:rgba(255,255,255,.12);color:white}
-.page {animation:appear .35s ease both}
-.footer {text-align:center;color:#666;font-size:9px;letter-spacing:3px;margin-top:35px}
-@keyframes appear {
-  from {opacity:0;transform:translateY(15px);filter:blur(4px)}
-  to {opacity:1;transform:translateY(0);filter:blur(0)}
+
+.tab {
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  background:#111;
+  color:#888;
+  border:1px solid #333;
 }
-@media(max-width:650px) {
-  .container {padding-top:20px}
-  .hero {padding:30px 22px;min-height:200px}
-  .hero h1 {letter-spacing:-2px}
-  .grid,.stats-grid {grid-template-columns:1fr}
-  .card {padding:20px}
-  .topbar {margin-bottom:20px}
+
+.tab.active {
+  background:white;
+  color:black;
 }
-@media(prefers-reduced-motion:reduce) {
-  *,*::before,*::after {animation-duration:.01ms!important;transition-duration:.01ms!important}
+
+.message {
+  font-size:13px;
+  color:#aaa;
+  margin-top:12px;
+  line-height:1.5;
+  word-break:break-word;
+}
+
+.section-title {
+  font-size:21px;
+  font-weight:800;
+  margin-top:26px;
+}
+
+.muted {
+  color:#888;
+  font-size:13px;
+  margin-top:8px;
+}
+
+.habit {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+  border:1px solid #292929;
+  border-radius:14px;
+  margin-top:10px;
+  background:#0b0b0b;
+  gap:10px;
+}
+
+.habit label {
+  flex:1;
+  font-size:14px;
+}
+
+.habit input[type=checkbox] {
+  width:20px;
+  height:20px;
+  accent-color:white;
+  margin:0;
+}
+
+.habit.done label {
+  color:#777;
+  text-decoration:line-through;
+}
+
+.delete {
+  background:transparent;
+  border:none;
+  color:#777;
+  font-size:20px;
+  padding:5px;
+}
+
+.progress-bg {
+  background:#252525;
+  height:9px;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:15px;
+}
+
+.progress {
+  height:100%;
+  width:0%;
+  background:white;
+  transition:width .3s;
+}
+
+.stat {
+  font-size:30px;
+  font-weight:800;
+  margin-top:10px;
+}
+
+.nav {
+  display:flex;
+  gap:8px;
+  margin-top:25px;
+  position:sticky;
+  bottom:10px;
+  background:#080808;
+  padding:8px;
+  border:1px solid #222;
+  border-radius:16px;
+}
+
+.nav button {
+  flex:1;
+  background:transparent;
+  color:#777;
+  border:none;
+  padding:12px 4px;
+  border-radius:10px;
+  font-size:12px;
+}
+
+.nav button.active {
+  background:white;
+  color:black;
+  font-weight:700;
+}
+
+.page {
+  display:none;
+}
+
+.page.active {
+  display:block;
+}
+
+.small {
+  font-size:12px;
+  color:#777;
+}
+
+#photoPreview {
+  width:100%;
+  border-radius:12px;
+  margin-top:12px;
+  max-height:300px;
+  object-fit:cover;
+}
+
+.note {
+  padding:14px;
+  border:1px solid #292929;
+  border-radius:14px;
+  margin-top:10px;
+}
+
+.note img {
+  width:100%;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+hr {
+  border:0;
+  border-top:1px solid #252525;
+  margin:18px 0;
+}
+
+@media(max-width:400px) {
+  .container {
+    padding:16px;
+  }
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
+
 <!-- AUTH -->
-<div id="authScreen" class="auth-wrap">
-  <div class="brand">MR.<span>GIIBYE</span> FITNESS</div>
-  <div class="glass card" style="margin-top:22px">
-    <div class="eyebrow">DISCIPLINE STARTS HERE</div>
-    <h1>BUILD YOUR<br>BETTER SELF.</h1>
-    <p class="muted">Sign in to save and sync your progress.</p>
-    <div class="tabs">
-      <button id="loginTab" class="active" onclick="setAuthMode('login')">Login</button>
-      <button id="signupTab" onclick="setAuthMode('signup')">Sign up</button>
-    </div>
-    <input id="email" class="field" type="email" placeholder="Email address" autocomplete="email">
-    <input id="password" class="field" type="password" placeholder="Password" autocomplete="current-password">
-    <button id="authButton" class="btn" onclick="submitAuth()">LOGIN</button>
-    <button class="btn secondary" onclick="resetPassword()">RESET PASSWORD</button>
-    <div id="authMessage" class="message"></div>
+<div id="authScreen">
+
+  <div style="margin-top:70px;text-align:center">
+    <div class="logo">MR.GIIBYE</div>
+    <div class="sub">FITNESS · DISCIPLINE · GROWTH</div>
   </div>
+
+  <div class="card">
+
+    <div class="tabs">
+      <button id="loginTab" class="tab active" onclick="switchAuth('login')">Login</button>
+      <button id="signupTab" class="tab" onclick="switchAuth('signup')">Sign Up</button>
+    </div>
+
+    <input id="email" type="email" placeholder="Email" autocomplete="email">
+
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+
+    <button id="authButton" class="btn" onclick="submitAuth()">Login</button>
+
+    <button class="btn secondary" onclick="resetPassword()">Reset Password</button>
+
+    <div id="authMessage" class="message"></div>
+
+  </div>
+
+  <p class="small" style="text-align:center;margin-top:20px">
+    MR.GIIBYE FITNESS
+  </p>
+
 </div>
 
 <!-- APP -->
-<main id="appScreen" class="container hidden">
-  <header class="topbar">
-    <div class="brand">MR.<span>GIIBYE</span> FITNESS</div>
-    <div style="text-align:right">
-      <div id="userEmail" class="status"></div>
-      <button class="btn secondary small" onclick="logout()">LOG OUT</button>
-    </div>
+<div id="appScreen" class="hidden">
+
+  <header style="margin-top:20px">
+    <div class="logo">MR.GIIBYE</div>
+    <div class="sub">FITNESS</div>
   </header>
 
   <!-- HOME -->
-  <section id="homePage" class="page">
-    <section class="glass hero">
-      <div class="eyebrow">YOUR PERSONAL PROGRESS SYSTEM</div>
-      <div class="hero-name">WELCOME BACK, <strong id="welcomeName">WARRIOR</strong></div>
-      <h1>DISCIPLINE.<br>CONSISTENCY.<br>PROGRESS.</h1>
-      <p>STAY HARD. KEEP MOVING FORWARD.</p>
-    </section>
+  <section id="homePage" class="page active">
 
-    <div class="stats-grid">
-      <section class="glass card">
-        <h2>Daily Goal</h2>
-        <div class="circle-wrap">
-          <div id="dailyCircle" class="circle"><strong id="dailyPercent">0%</strong></div>
-          <div>
-            <div class="muted">Today's progress</div>
-            <div id="dailyText" class="muted">0 of 0 completed</div>
-          </div>
-        </div>
-      </section>
-      <section class="glass card">
-        <h2>Day Streak</h2>
-        <div class="stat-number"><span id="completedDays">0</span></div>
-        <p class="muted">Completed days</p>
-      </section>
+    <div class="section-title">Your Daily Progress</div>
+    <p class="muted">Build healthy habits one day at a time.</p>
+
+    <div class="card">
+
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span>Today's progress</span>
+        <span id="progressText">0%</span>
+      </div>
+
+      <div class="progress-bg">
+        <div id="progressBar" class="progress"></div>
+      </div>
+
+      <div class="stat" id="completedText">0 / 0</div>
+      <div class="muted">Habits completed today</div>
+
     </div>
 
-    <h2 class="section-title">TODAY'S HABITS</h2>
-    <section class="glass card">
-      <div id="homeHabitList"></div>
-      <button class="btn secondary" onclick="showPage('stats')">VIEW ALL HABITS</button>
-    </section>
-    <div class="footer">DISCIPLINE · CONSISTENCY · PROGRESS</div>
+    <div class="section-title">Daily Habits</div>
+
+    <div id="habitList"></div>
+
   </section>
 
   <!-- STATS -->
-  <section id="statsPage" class="page hidden">
-    <div class="eyebrow">YOUR JOURNEY</div>
-    <h1 style="font-size:36px;letter-spacing:-2px">YOUR PROGRESS.</h1>
-    <div class="grid">
-      <section class="glass card">
-        <h2>Daily Completion</h2>
-        <div id="statsPercent" class="stat-number">0%</div>
-        <div class="progress-track"><div id="dailyBar" class="progress-fill"></div></div>
-        <p id="statsDailyText" class="muted">Complete your habits today.</p>
-      </section>
-      <section class="glass card rank-box">
-        <div class="rank-icon">✦</div>
-        <div class="eyebrow">CURRENT MILESTONE</div>
-        <div id="rankName" class="rank">STARTER</div>
-        <div id="rankDescription" class="rank-description">Your journey begins today.</div>
-      </section>
+  <section id="statsPage" class="page">
+
+    <div class="section-title">Your Statistics</div>
+
+    <div class="card">
+      <div class="muted">Today's completion</div>
+      <div class="stat" id="statsProgress">0%</div>
     </div>
-    <h2 class="section-title">DAILY CHECKLIST</h2>
-    <section class="glass card">
-      <div class="add-row">
-        <input id="newHabit" class="field" placeholder="Add a healthy habit..." maxlength="70">
-        <button class="btn small" onclick="addHabit()">ADD</button>
-      </div>
-      <div id="habitList"></div>
-      <p class="muted">Create habits that are realistic and healthy for you.</p>
-    </section>
+
+    <div class="card">
+      <div class="muted">Completed days</div>
+      <div class="stat" id="completedDays">0</div>
+    </div>
+
+    <div class="card">
+      <div class="muted">Your habits</div>
+      <div id="statsHabitList"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title" style="margin-top:0">Add Habit</div>
+
+      <input id="newHabit" placeholder="Enter a new habit">
+
+      <button class="btn" onclick="addHabit()">Add Habit</button>
+    </div>
+
   </section>
 
   <!-- MEAL -->
-  <section id="mealPage" class="page hidden">
-    <div class="eyebrow">NOURISH YOUR DAY</div>
-    <h1 style="font-size:36px;letter-spacing:-2px">MEAL JOURNAL.</h1>
-    <section class="glass card">
-      <h2>Save a meal photo</h2>
-      <p class="muted">Add a photo and a note. This version does not automatically recognize food or calculate nutrition.</p>
-      <input id="mealPhoto" class="field" type="file" accept="image/*">
-      <input id="mealNote" class="field" placeholder="Meal notes (optional)" maxlength="150">
-      <img id="photoPreview" class="photo-preview hidden" alt="Meal preview">
-      <button class="btn" onclick="saveMealNote()">SAVE MEAL NOTE</button>
-      <div id="mealMessage" class="message"></div>
-    </section>
-    <section class="glass card" style="margin-top:15px">
-      <h2>COMING SOON</h2>
-      <p class="muted">More meal journal features are planned for future updates.</p>
-    </section>
+  <section id="mealPage" class="page">
+
+    <div class="section-title">Meal Journal</div>
+    <p class="muted">Record your meals and daily experiences.</p>
+
+    <div class="card">
+
+      <input id="mealTitle" placeholder="Meal name">
+
+      <textarea id="mealDescription" placeholder="Notes about your meal..."></textarea>
+
+      <input type="file" id="mealPhoto" accept="image/*" onchange="previewPhoto(event)">
+
+      <img id="photoPreview" class="hidden">
+
+      <button class="btn" onclick="saveMealNote()">Save Note</button>
+
+    </div>
+
+    <div class="section-title">Your Journal</div>
+
+    <div id="mealNotesList"></div>
+
   </section>
 
   <!-- PROFILE -->
-  <section id="profilePage" class="page hidden">
-    <div class="eyebrow">YOUR ACCOUNT</div>
-    <h1 style="font-size:36px;letter-spacing:-2px">PROFILE.</h1>
-    <section class="glass card">
-      <h2>Display name</h2>
-      <input id="displayName" class="field" placeholder="Your name" maxlength="40">
-      <button class="btn" onclick="saveProfile()">SAVE PROFILE</button>
-      <div id="profileMessage" class="message"></div>
-    </section>
-    <section class="glass card" style="margin-top:15px">
-      <h2>MR.GIIBYE FITNESS</h2>
-      <p class="muted">DISCIPLINE. CONSISTENCY. PROGRESS.</p>
-      <div class="eyebrow">PREMIUM EXPERIENCE — NOT AVAILABLE YET</div>
-    </section>
-  </section>
-</main>
+  <section id="profilePage" class="page">
 
-<!-- BOTTOM NAV -->
-<nav id="bottomNav" class="bottom-nav hidden">
-  <button class="nav-item active" data-page="home" onclick="showPage('home')">
-    <span class="nav-icon">⌂</span>HOME
-  </button>
-  <button class="nav-item" data-page="stats" onclick="showPage('stats')">
-    <span class="nav-icon">◫</span>STATS
-  </button>
-  <button class="nav-item" data-page="meal" onclick="showPage('meal')">
-    <span class="nav-icon">◉</span>MEAL
-  </button>
-  <button class="nav-item" data-page="profile" onclick="showPage('profile')">
-    <span class="nav-icon">○</span>PROFILE
-  </button>
-</nav>
+    <div class="section-title">Profile</div>
+
+    <div class="card">
+
+      <div class="muted">Account</div>
+      <div id="userEmail" style="margin-top:10px;word-break:break-word"></div>
+
+      <hr>
+
+      <label class="muted">Display name</label>
+
+      <input id="profileName" placeholder="Your name">
+
+      <button class="btn" onclick="saveProfile()">Save Profile</button>
+
+      <hr>
+
+      <button class="btn secondary" onclick="logout()">Logout</button>
+
+    </div>
+
+  </section>
+
+  <!-- NAV -->
+  <div class="nav">
+
+    <button class="active" onclick="navigate('homePage',this)">Home</button>
+
+    <button onclick="navigate('statsPage',this)">Stats</button>
+
+    <button onclick="navigate('mealPage',this)">Meal</button>
+
+    <button onclick="navigate('profilePage',this)">Profile</button>
+
+  </div>
+
+  <div id="appMessage" class="message"></div>
+
+</div>
+
+</div>
 
 <script>
+
+// ==========================================
+// SUPABASE CONFIGURATION
+// ==========================================
+
 const SUPABASE_URL = "https://jpusplueirbglxzjrldp.supabase.co";
 
-/* Keep your existing Supabase Publishable Key here.
-   Do not use a Secret Key or service_role key. */
-const SUPABASE_KEY = " sb_publishable_lpnwEbHtHKu14He5smdI-Q_CLdPrmot";
+// Replace this with your Supabase publishable key.
+const SUPABASE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
 
-const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+// ==========================================
+// APP STATE
+// ==========================================
 
 let currentUser = null;
 let authMode = "login";
+let photoData = null;
+
 let appData = {
   habits:[
     {id:1,name:"Drink enough water",done:false},
@@ -345,329 +489,594 @@ let appData = {
   mealNotes:[]
 };
 
-function localDate() {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
+// ==========================================
+// HELPERS
+// ==========================================
 
 function showMessage(id,message) {
   document.getElementById(id).textContent = message;
 }
 
-function showPage(page) {
-  ["home","stats","meal","profile"].forEach(name => {
-    document.getElementById(name+"Page").classList.toggle("hidden",name!==page);
-  });
-  document.querySelectorAll(".nav-item").forEach(button => {
-    button.classList.toggle("active",button.dataset.page===page);
-  });
-  window.scrollTo({top:0,behavior:"smooth"});
+function showAppMessage(message) {
+  showMessage("appMessage",message);
 }
 
-function setAuthMode(mode) {
+function switchAuth(mode) {
+
   authMode = mode;
+
   document.getElementById("loginTab").classList.toggle("active",mode==="login");
   document.getElementById("signupTab").classList.toggle("active",mode==="signup");
-  document.getElementById("authButton").textContent = mode==="login" ? "LOGIN" : "CREATE ACCOUNT";
-  document.getElementById("password").autocomplete = mode==="login" ? "current-password" : "new-password";
-  showMessage("authMessage","");
+
+  document.getElementById("authButton").textContent =
+    mode==="login" ? "Login" : "Create Account";
+
+  document.getElementById("authMessage").textContent = "";
+
 }
 
+function navigate(page,button) {
+
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  document.getElementById(page).classList.add("active");
+
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  renderApp();
+
+}
+
+// ==========================================
+// AUTHENTICATION
+// ==========================================
+
 async function submitAuth() {
+
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+  const button = document.getElementById("authButton");
 
-  if (!email || !password) {
+  if(!email || !password) {
     showMessage("authMessage","Enter your email and password.");
     return;
   }
 
+  if(password.length < 6) {
+    showMessage("authMessage","Password must be at least 6 characters.");
+    return;
+  }
+
+  button.disabled = true;
   showMessage("authMessage","Please wait...");
 
   try {
-    const result = authMode==="signup"
-      ? await db.auth.signUp({email,password})
-      : await db.auth.signInWithPassword({email,password});
 
-    if (result.error) {
-      showMessage("authMessage",result.error.message);
-    } else if (authMode==="signup" && !result.data.session) {
-      showMessage("authMessage","Account created. Check your email to confirm, then log in.");
+    if(authMode==="signup") {
+
+      const {data,error} = await db.auth.signUp({
+        email,
+        password
+      });
+
+      if(error) throw error;
+
+      if(data.session) {
+        showMessage("authMessage","Account created successfully!");
+      } else {
+        showMessage(
+          "authMessage",
+          "Account created. Email confirmation may still be required."
+        );
+      }
+
+    } else {
+
+      const {error} = await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if(error) throw error;
+
+      showMessage("authMessage","Login successful!");
+
     }
+
   } catch(error) {
+
     showMessage("authMessage",error.message);
+
+  } finally {
+
+    button.disabled = false;
+
   }
+
 }
+
 async function resetPassword() {
+
   const email = document.getElementById("email").value.trim();
-  if (!email) {
-    showMessage("authMessage","Enter your email address first.");
+
+  if(!email) {
+    showMessage("authMessage","Enter your email first.");
     return;
   }
-  const {error} = await db.auth.resetPasswordForEmail(email,{
-    redirectTo:window.location.href.split("#")[0]
-  });
-  showMessage("authMessage",error ? error.message : "Password reset email sent.");
+
+  showMessage("authMessage","Sending reset request...");
+
+  try {
+
+    const {error} = await db.auth.resetPasswordForEmail(email,{
+      redirectTo:SUPABASE_URL
+    });
+
+    if(error) throw error;
+
+    showMessage("authMessage","Password reset email sent.");
+
+  } catch(error) {
+
+    showMessage("authMessage",error.message);
+
+  }
+
 }
 
 async function logout() {
+
   const {error} = await db.auth.signOut();
-  if (error) alert(error.message);
+
+  if(error) {
+    showAppMessage(error.message);
+  }
+
 }
 
+// ==========================================
+// CLOUD DATA
+// ==========================================
+
 async function loadUserData() {
-  const {data,error} = await db.from("user_data")
-    .select("data")
-    .eq("user_id",currentUser.id)
-    .maybeSingle();
 
-  if (error) {
-    console.error(error);
-    alert("Could not load saved data. Check your database setup.");
-    return;
+  if(!currentUser) return;
+
+  try {
+
+    const {data,error} = await db
+      .from("user_data")
+      .select("data")
+      .eq("user_id",currentUser.id)
+      .maybeSingle();
+
+    if(error) throw error;
+
+    if(data && data.data) {
+
+      appData = {
+        habits:Array.isArray(data.data.habits) ? data.data.habits : [],
+        completedDates:Array.isArray(data.data.completedDates) ? data.data.completedDates : [],
+        profile:data.data.profile || {name:""},
+        mealNotes:Array.isArray(data.data.mealNotes) ? data.data.mealNotes : []
+      };
+
+    }
+
+    renderApp();
+
+  } catch(error) {
+
+    showAppMessage("Load error: "+error.message);
+
   }
 
-  if (data && data.data) {
-    appData = {
-      ...appData,
-      ...data.data,
-      profile:{...appData.profile,...(data.data.profile || {})}
-    };
-  }
-  renderApp();
 }
 
 async function saveToCloud() {
-  if (!currentUser) return false;
 
-  const {error} = await db.from("user_data").upsert({
-    user_id:currentUser.id,
-    data:appData,
-    updated_at:new Date().toISOString()
-  });
+  if(!currentUser) return;
 
-  if (error) {
-    console.error(error);
-    alert("Sync failed: " + error.message);
-    return false;
+  try {
+
+    const {error} = await db
+      .from("user_data")
+      .upsert({
+        user_id:currentUser.id,
+        data:appData,
+        updated_at:new Date().toISOString()
+      },{onConflict:"user_id"});
+
+    if(error) throw error;
+
+  } catch(error) {
+
+    showAppMessage("Save error: "+error.message);
+
   }
-  return true;
+
 }
 
-function renderApp() {
-  document.getElementById("authScreen").classList.add("hidden");
-  document.getElementById("appScreen").classList.remove("hidden");
-  document.getElementById("bottomNav").classList.remove("hidden");
-  document.getElementById("userEmail").textContent = currentUser.email || "";
-  document.getElementById("displayName").value = appData.profile.name || "";
-  document.getElementById("welcomeName").textContent = (appData.profile.name || "WARRIOR").toUpperCase();
-  renderHabits();
-  renderProgress();
-}
+// ==========================================
+// HABITS
+// ==========================================
 
 function renderHabits() {
+
   const list = document.getElementById("habitList");
-  const homeList = document.getElementById("homeHabitList");
+
   list.innerHTML = "";
-  homeList.innerHTML = "";
 
-  appData.habits.forEach(habit => {
-    const row = document.createElement("div");
-    row.className = "habit-row";
+  appData.habits.forEach(habit=>{
 
-    const left = document.createElement("label");
-    left.className = "habit-left";
+    const div = document.createElement("div");
+
+    div.className = "habit"+(habit.done?" done":"");
+
+    const label = document.createElement("label");
+    label.textContent = habit.name;
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = Boolean(habit.done);
-    checkbox.addEventListener("change",async () => {
-      habit.done = checkbox.checked;
-      await updateCompletedDate();
-      renderHabits();
-      renderProgress();
-      await saveToCloud();
-    });
+    checkbox.checked = !!habit.done;
 
-    const name = document.createElement("span");
-    name.textContent = habit.name;
-    left.append(checkbox,name);
+    checkbox.onchange = ()=>toggleHabit(habit.id);
 
-    const remove = document.createElement("button");
-    remove.className = "delete";
-    remove.textContent = "×";
-    remove.setAttribute("aria-label","Delete habit");
-    remove.addEventListener("click",async () => {
-      appData.habits = appData.habits.filter(item => item.id !== habit.id);
-      await updateCompletedDate();
-      renderHabits();
-      renderProgress();
-      await saveToCloud();
-    });
+    div.appendChild(label);
+    div.appendChild(checkbox);
 
-    row.append(left,remove);
-    list.append(row);
+    list.appendChild(div);
 
-    const homeRow = document.createElement("div");
-    homeRow.className = "habit-row";
-    const homeLeft = document.createElement("label");
-    homeLeft.className = "habit-left";
-
-    const homeCheckbox = document.createElement("input");
-    homeCheckbox.type = "checkbox";
-    homeCheckbox.checked = Boolean(habit.done);
-    homeCheckbox.addEventListener("change",async () => {
-      habit.done = homeCheckbox.checked;
-      await updateCompletedDate();
-      renderHabits();
-      renderProgress();
-      await saveToCloud();
-    });
-
-    const homeName = document.createElement("span");
-    homeName.textContent = habit.name;
-    homeLeft.append(homeCheckbox,homeName);
-    homeRow.append(homeLeft);
-    homeList.append(homeRow);
   });
+
+  renderStatsHabits();
+
+}
+
+async function toggleHabit(id) {
+
+  const habit = appData.habits.find(h=>h.id===id);
+
+  if(!habit) return;
+
+  habit.done = !habit.done;
+
+  updateCompletedDate();
+  renderApp();
+  await saveToCloud();
+
+}
+
+function renderStatsHabits() {
+
+  const list = document.getElementById("statsHabitList");
+
+  list.innerHTML = "";
+
+  appData.habits.forEach(habit=>{
+
+    const div = document.createElement("div");
+    div.className = "habit";
+
+    const label = document.createElement("label");
+    label.textContent = habit.name;
+
+    const button = document.createElement("button");
+    button.className = "delete";
+    button.textContent = "×";
+    button.onclick = ()=>deleteHabit(habit.id);
+
+    div.appendChild(label);
+    div.appendChild(button);
+
+    list.appendChild(div);
+
+  });
+
 }
 
 async function addHabit() {
+
   const input = document.getElementById("newHabit");
   const name = input.value.trim();
-  if (!name) return;
 
-  appData.habits.push({id:Date.now(),name,done:false});
+  if(!name) {
+    showAppMessage("Enter a habit.");
+    return;
+  }
+
+  appData.habits.push({
+    id:Date.now(),
+    name,
+    done:false
+  });
+
   input.value = "";
-  await updateCompletedDate();
-  renderHabits();
-  renderProgress();
+
+  renderApp();
   await saveToCloud();
+
 }
 
-async function updateCompletedDate() {
-  const today = localDate();
-  const allDone = appData.habits.length>0 && appData.habits.every(h => h.done);
-  appData.completedDates = appData.completedDates.filter(date => date !== today);
-  if (allDone) appData.completedDates.push(today);
-  appData.completedDates = [...new Set(appData.completedDates)];
+async function deleteHabit(id) {
+
+  appData.habits = appData.habits.filter(h=>h.id!==id);
+
+  updateCompletedDate();
+  renderApp();
+  await saveToCloud();
+
 }
 
-function getRank(days) {
-  if (days>=30) return ["TOP 1% ELITE","30+ completed days milestone"];
-  if (days>=14) return ["ELITE","14+ completed days milestone"];
-  if (days>=7) return ["DISCIPLINED","7+ completed days milestone"];
-  if (days>=3) return ["BUILDER","3+ completed days milestone"];
-  return ["STARTER","Your journey begins today."];
+function updateCompletedDate() {
+
+  const today = new Date().toISOString().slice(0,10);
+
+  const allDone =
+    appData.habits.length>0 &&
+    appData.habits.every(h=>h.done);
+
+  if(allDone) {
+
+    if(!appData.completedDates.includes(today)) {
+      appData.completedDates.push(today);
+    }
+
+  } else {
+
+    appData.completedDates =
+      appData.completedDates.filter(d=>d!==today);
+
+  }
+
 }
+
+// ==========================================
+// PROGRESS
+// ==========================================
 
 function renderProgress() {
+
   const total = appData.habits.length;
-  const done = appData.habits.filter(h => h.done).length;
-  const percent = total ? Math.round(done/total*100) : 0;
-  const days = appData.completedDates.length;
-  const rank = getRank(days);
 
-  document.getElementById("dailyPercent").textContent = percent+"%";
-  document.getElementById("statsPercent").textContent = percent+"%";
-  document.getElementById("dailyBar").style.width = percent+"%";
-  document.getElementById("dailyCircle").style.background =
-    `conic-gradient(#eee ${percent*3.6}deg,rgba(255,255,255,.10) ${percent*3.6}deg)`;
+  const completed = appData.habits.filter(h=>h.done).length;
 
-  document.getElementById("dailyText").textContent = `${done} of ${total} completed`;
-  document.getElementById("statsDailyText").textContent = `${done} of ${total} habits completed today.`;
-  document.getElementById("completedDays").textContent = days;
-  document.getElementById("rankName").textContent = rank[0];
-  document.getElementById("rankDescription").textContent = rank[1];
+  const percent = total ? Math.round(completed/total*100) : 0;
+
+  document.getElementById("progressText").textContent=percent+"%";
+
+  document.getElementById("progressBar").style.width=percent+"%";
+
+  document.getElementById("completedText").textContent =
+    completed+" / "+total;
+
+  document.getElementById("statsProgress").textContent=percent+"%";
+
+  document.getElementById("completedDays").textContent =
+    appData.completedDates.length;
+
 }
+
+// ==========================================
+// PROFILE
+// ==========================================
 
 async function saveProfile() {
-  appData.profile.name = document.getElementById("displayName").value.trim();
-  const saved = await saveToCloud();
-  if (saved) {
-    document.getElementById("welcomeName").textContent =
-      (appData.profile.name || "WARRIOR").toUpperCase();
-    showMessage("profileMessage","Profile saved.");
-  }
+
+  appData.profile.name =
+    document.getElementById("profileName").value.trim();
+
+  await saveToCloud();
+
+  showAppMessage("Profile saved.");
+
 }
 
-document.getElementById("mealPhoto").addEventListener("change",event => {
-  const file = event.target.files[0];
-  const preview = document.getElementById("photoPreview");
+// ==========================================
+// MEAL JOURNAL
+// ==========================================
 
-  if (!file) {
-    preview.classList.add("hidden");
+function previewPhoto(event) {
+
+  const file = event.target.files[0];
+
+  if(!file) return;
+
+  if(file.size > 2*1024*1024) {
+
+    showAppMessage("Photo must be smaller than 2 MB.");
+
+    event.target.value="";
+    photoData=null;
+
+    document.getElementById("photoPreview").classList.add("hidden");
+
     return;
-  }
-  if (!file.type.startsWith("image/")) {
-    showMessage("mealMessage","Please select an image.");
-    return;
+
   }
 
   const reader = new FileReader();
-  reader.onload = () => {
-    preview.src = reader.result;
+
+  reader.onload = function() {
+
+    photoData = reader.result;
+
+    const preview = document.getElementById("photoPreview");
+
+    preview.src=photoData;
     preview.classList.remove("hidden");
+
   };
+
   reader.readAsDataURL(file);
-});
+
+}
 
 async function saveMealNote() {
-  const note = document.getElementById("mealNote").value.trim();
-  const file = document.getElementById("mealPhoto").files[0];
 
-  if (!file && !note) {
-    showMessage("mealMessage","Add a photo or a note first.");
+  const title = document.getElementById("mealTitle").value.trim();
+
+  const description =
+    document.getElementById("mealDescription").value.trim();
+
+  if(!title && !description && !photoData) {
+
+    showAppMessage("Add a note first.");
     return;
+
   }
 
-  appData.mealNotes.push({
-    note,
-    photoName:file ? file.name : "",
-    date:new Date().toISOString()
+  appData.mealNotes.unshift({
+    id:Date.now(),
+    title,
+    description,
+    photo:photoData,
+    date:new Date().toLocaleDateString()
   });
 
-  const saved = await saveToCloud();
-  if (saved) {
-    document.getElementById("mealNote").value = "";
-    document.getElementById("mealPhoto").value = "";
-    document.getElementById("photoPreview").classList.add("hidden");
-    showMessage("mealMessage","Meal note saved. The photo itself is not uploaded.");
-  }
+  document.getElementById("mealTitle").value="";
+  document.getElementById("mealDescription").value="";
+  document.getElementById("mealPhoto").value="";
+
+  photoData=null;
+
+  document.getElementById("photoPreview").classList.add("hidden");
+
+  renderApp();
+  await saveToCloud();
+
+  showAppMessage("Journal saved.");
+
 }
 
-let loadingUserId = null;
+function renderMealNotes() {
 
-db.auth.onAuthStateChange((event,session) => {
+  const list = document.getElementById("mealNotesList");
+
+  list.innerHTML="";
+
+  appData.mealNotes.forEach(note=>{
+
+    const div = document.createElement("div");
+    div.className="note";
+
+    const title = document.createElement("strong");
+    title.textContent=note.title || "Meal note";
+
+    const date = document.createElement("div");
+    date.className="small";
+    date.textContent=note.date || "";
+
+    const description = document.createElement("p");
+    description.style.marginTop="10px";
+    description.style.whiteSpace="pre-wrap";
+    description.textContent=note.description || "";
+
+    div.appendChild(title);
+    div.appendChild(date);
+    div.appendChild(description);
+
+    if(note.photo) {
+
+      const img = document.createElement("img");
+      img.src=note.photo;
+      img.alt="Meal journal photo";
+
+      div.appendChild(img);
+
+    }
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className="btn secondary";
+    deleteBtn.textContent="Delete Note";
+    deleteBtn.onclick=()=>deleteMealNote(note.id);
+
+    div.appendChild(deleteBtn);
+
+    list.appendChild(div);
+
+  });
+
+}
+
+async function deleteMealNote(id) {
+
+  appData.mealNotes =
+    appData.mealNotes.filter(n=>n.id!==id);
+
+  renderApp();
+  await saveToCloud();
+
+}
+
+// ==========================================
+// RENDER
+// ==========================================
+
+function renderApp() {
+
+  if(!currentUser) return;
+
+  renderHabits();
+  renderProgress();
+  renderMealNotes();
+
+  document.getElementById("userEmail").textContent =
+    currentUser.email || "";
+
+  document.getElementById("profileName").value =
+    appData.profile.name || "";
+
+}
+
+// ==========================================
+// AUTH LISTENER
+// ==========================================
+
+db.auth.onAuthStateChange((event,session)=>{
+
   currentUser = session ? session.user : null;
 
-  if (currentUser) {
+  if(currentUser) {
+
     document.getElementById("authScreen").classList.add("hidden");
     document.getElementById("appScreen").classList.remove("hidden");
-    document.getElementById("bottomNav").classList.remove("hidden");
 
-    if (loadingUserId !== currentUser.id) {
-      loadingUserId = currentUser.id;
-      setTimeout(() => loadUserData(),0);
-    }
+    setTimeout(()=>{
+      loadUserData();
+    },0);
+
   } else {
-    loadingUserId = null;
-    document.getElementById("appScreen").classList.add("hidden");
-    document.getElementById("bottomNav").classList.add("hidden");
+
     document.getElementById("authScreen").classList.remove("hidden");
+    document.getElementById("appScreen").classList.add("hidden");
+
   }
+
 });
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load",() => {
-    navigator.serviceWorker.register("./service-worker.js").catch(error => {
-      console.error("Service worker error:",error);
-    });
+// ==========================================
+// SERVICE WORKER
+// ==========================================
+
+if("serviceWorker" in navigator) {
+
+  window.addEventListener("load",()=>{
+
+    navigator.serviceWorker.register("service-worker.js")
+      .catch(error=>console.log("SW error:",error));
+
   });
+
 }
+
 </script>
+
 </body>
 </html>
