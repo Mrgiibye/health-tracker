@@ -258,10 +258,6 @@
       line-height: 1.2;
     }
 
-    .welcome h1 span {
-      color: #fff;
-    }
-
     .welcome p {
       color: #888;
       margin-top: 8px;
@@ -354,7 +350,7 @@
     }
 
     .habit-item.done {
-      opacity: 0.6;
+      opacity: 0.55;
     }
 
     .habit-check {
@@ -389,7 +385,6 @@
       font-size: 18px;
     }
 
-    /* Meal & Profile forms */
     .form-group {
       margin-bottom: 16px;
     }
@@ -449,6 +444,41 @@
       font-size: 14px;
     }
 
+    /* Mobile bottom nav */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #111;
+      border-top: 1px solid #222;
+      padding: 10px 0 22px;
+      justify-content: space-around;
+      z-index: 200;
+    }
+
+    .mobile-nav button {
+      background: none;
+      border: none;
+      color: #777;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .mobile-nav button.active {
+      color: #fff;
+    }
+
+    .mobile-nav button svg {
+      width: 22px;
+      height: 22px;
+    }
+
     /* Mobile responsive */
     @media (max-width: 900px) {
       .sidebar {
@@ -456,13 +486,16 @@
       }
       .main {
         margin-left: 0;
-        padding: 20px;
+        padding: 20px 16px 100px;
       }
       .stats-row {
         grid-template-columns: 1fr;
       }
       .welcome h1 {
         font-size: 28px;
+      }
+      .mobile-nav {
+        display: flex !important;
       }
     }
   </style>
@@ -492,7 +525,7 @@
 
   <!-- APP -->
   <div id="app">
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (Desktop) -->
     <div class="sidebar">
       <div class="logo">
         <div class="logo-icon">MG</div>
@@ -502,19 +535,19 @@
         </div>
       </div>
 
-      <div class="nav-item active" onclick="showPage('home')">
+      <div class="nav-item active" onclick="showPage('home', this)">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
         Home
       </div>
-      <div class="nav-item" onclick="showPage('stats')">
+      <div class="nav-item" onclick="showPage('stats', this)">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
         Stats
       </div>
-      <div class="nav-item" onclick="showPage('meal')">
+      <div class="nav-item" onclick="showPage('meal', this)">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
         Meal
       </div>
-      <div class="nav-item" onclick="showPage('profile')">
+      <div class="nav-item" onclick="showPage('profile', this)">
         <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
         Profile
       </div>
@@ -628,6 +661,26 @@
         </div>
       </div>
     </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+      <button class="active" onclick="showPageMobile('home', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Home
+      </button>
+      <button onclick="showPageMobile('stats', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>
+        Stats
+      </button>
+      <button onclick="showPageMobile('meal', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+        Meal
+      </button>
+      <button onclick="showPageMobile('profile', this)">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        Profile
+      </button>
+    </div>
   </div>
 
   <script>
@@ -635,7 +688,7 @@
     // SUPABASE CONFIG
     // ==============================
     const SUPABASE_URL = "https://jpusplueirbglxzjrldp.supabase.co";
-    const SUPABASE_KEY ="sb_publishable_lpnwEbHtHKu14He5smdI-Q_CLdPrmot"; //
+    const SUPABASE_KEY = "sb_publishable_lpnwEbHtHKu14He5smdI-Q_CLdPrmot";
 
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -727,17 +780,28 @@
       updateStats();
     }
 
-    function showPage(pageId) {
+    function showPage(pageId, btn) {
       document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
       document.getElementById(pageId).classList.add("active");
 
       document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-      event.currentTarget.classList.add("active");
+      if (btn) btn.classList.add("active");
+    }
+
+    function showPageMobile(pageId, btn) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(pageId).classList.add("active");
+
+      document.querySelectorAll(".mobile-nav button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
     }
 
     function renderHabits() {
       const list = document.getElementById("habitsList");
+      const statsList = document.getElementById("statsHabits");
       list.innerHTML = "";
+      statsList.innerHTML = "";
+
       appData.habits.forEach(h => {
         const div = document.createElement("div");
         div.className = "habit-item" + (h.done ? " done" : "");
@@ -748,6 +812,10 @@
           <div class="habit-icon">${h.icon}</div>
         `;
         list.appendChild(div);
+
+        const div2 = div.cloneNode(true);
+        div2.onclick = () => toggleHabit(h.id);
+        statsList.appendChild(div2);
       });
     }
 
@@ -794,7 +862,7 @@
         <div style="padding:12px 0;border-bottom:1px solid #222">
           <strong>${m.name}</strong><br>
           <small style="color:#666">${m.date}</small><br>
-          ${m.notes}
+          ${m.notes || ""}
         </div>
       `).join("");
     }
@@ -814,4 +882,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
